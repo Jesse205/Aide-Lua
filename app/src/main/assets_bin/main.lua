@@ -444,7 +444,13 @@ end
 notFirstOnResume=false
 function onResume()
   if notFirstOnResume then
-    if OpenedFile and IsEdtor then
+    if OpenedFile and EditorUtil.isPreviewing then
+      EditorUtil.switchPreview(false)
+      if IsEdtor then
+        reOpenFile()
+      end
+      EditorUtil.switchPreview(true)
+     elseif OpenedFile and IsEdtor then
       reOpenFile()
     end
   end
@@ -561,8 +567,8 @@ function onKeyUp(KeyCode,event)
           drawer.closeDrawer(Gravity.LEFT)--没有当前文件夹，当做啥时也没发生，关闭侧滑
         end
         return true
-       elseif previewChip.isChecked() then
-        editChip.setChecked(true)
+       elseif EditorUtil.isPreviewing then
+        EditorUtil.switchPreview(false)
         return true
        else--啥都没打开
         if (System.currentTimeMillis()-lastBackTime)> 2000 then
@@ -924,18 +930,19 @@ previewChipGroup.setOnCheckedChangeListener{
      elseif chipGroup.getParent().getVisibility()==View.VISIBLE then
       local chip=chipGroup.findViewById(selectedId)
       if chip then
-        local id=chip.getId()
-        local isPreview=id==previewChip.getId()
-        if selectedId~=previewChipGroupSelectedId then
-          EditorUtil.switchPreview(NowFileType,isPreview)
-        end
-        previewChipGroupSelectedId=id
+        previewChipGroupSelectedId=chip.getId()
         return
       end
     end
     previewChipGroupSelectedId=nil
   end
 }
+editChip.onClick=function()
+  EditorUtil.switchPreview(false)
+end
+previewChip.onClick=function()
+  EditorUtil.switchPreview(true)
+end
 
 screenConfigDecoder=ScreenFixUtil.ScreenConfigDecoder({
   onDeviceChanged=function(device,oldDevice)

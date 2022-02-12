@@ -735,7 +735,6 @@ function openFile(file,reOpen,line)
         adp.notifyDataSetChanged()
       end]]
       if ProjectUtil.SupportPreviewType[fileType] then
-        editChip.setChecked(true)
         previewChipCardView.setVisibility(View.VISIBLE)
        else
         previewChipCardView.setVisibility(View.GONE)
@@ -848,6 +847,7 @@ end
 
 function closeFile(doNotSave,keepSharedData)
   if OpenedFile then
+    EditorUtil.switchPreview(false)
     if not(doNotSave) then
       saveFile()
     end

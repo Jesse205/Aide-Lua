@@ -25,6 +25,8 @@ EditorUtil.NowEditorType=nil
 EditorUtil.NowEditor=nil
 EditorUtil.IsEdtor=nil
 
+EditorUtil.isPreviewing=false
+
 EditorUtil.TextFileType2EditorType={
   lua="LuaEditor",
   aly="LuaEditor",
@@ -41,7 +43,7 @@ EditorUtil.TextFileType2EditorType={
   json="CodeEditor",
 }
 
-local oldThemeId
+local oldThemeId,xmlPreviewMode
 EditorUtil.PreviewFunc={
   svg=function()
     EditorUtil.switchEditor("PhotoView")--将编辑器切换为Lua编辑器
@@ -58,7 +60,7 @@ EditorUtil.PreviewFunc={
      else
       activity.setTheme(R.style.Theme_MaterialComponents_Light)
     end
-    local layout=loadlayout2(loadfile(NowFile.getPath())(),{},nil,NowProjectDirectory.getPath())
+    local layout=loadlayout2(assert(loadfile(NowFile.getPath()))(),{},nil,NowProjectDirectory.getPath())
     --NowEditor.removeAllViews()
     NowEditor.addView(layout)
     return true
@@ -72,23 +74,62 @@ EditorUtil.PreviewFunc={
     NowEditor.removeAllViews()
   end,
   xml=function()
-    EditorUtil.switchEditor("PhotoView")--将编辑器切换为Lua编辑器
     local content=io.readall(NowFile.getPath())
-    content=content:gsub("vector","svg")
-    :gsub("http://schemas.android.com/apk/res/android","http://www.w3.org/2000/svg")
-    :gsub("android:fillColor","fill")
-    :gsub("@android:color/white","#ffffff")
-    :gsub("@android:color/black","#000000")
-    :gsub('android:tint="(.-)"',"")
-    :gsub('android:pathData="(.-)"/>',function(v)
-      return 'd="'..v..'"/>'
-    end)
-    :gsub("dp","")
-    :gsub("viewportWidth(.-)>",[[viewBox="0 0 24 24">]])
-    :gsub("android:","")
-    Sharp.loadString(content).into(NowEditor)
+    local layout,s=content:gsub("</%w+>","}")
+    if s==0 then
+      return false
+    end
+    if content:find("</vector>") then
+      xmlPreviewMode="photo"
+      content=content:gsub("vector","svg")
+      :gsub("http://schemas.android.com/apk/res/android","http://www.w3.org/2000/svg")
+      :gsub("android:fillColor","fill")
+      :gsub("@android:color/white","#ffffff")
+      :gsub("@android:color/black","#000000")
+      :gsub('android:tint="(.-)"',"")
+      :gsub('android:pathData="(.-)"/>',function(v)
+        return 'd="'..v..'"/>'
+      end)
+      :gsub("dp","")
+      :gsub("viewportWidth(.-)>",[[viewBox="0 0 24 24">]])
+      :gsub("android:","")
+      EditorUtil.switchEditor("PhotoView")
+      Sharp.loadString(content).into(NowEditor)
+     else
+      xmlPreviewMode="layout"
+      layout=layout:gsub("<%?[^<>]+%?>","")
+      :gsub("xmlns:android=%b\"\"","")
+      :gsub("%w+:","")
+      :gsub("\"([^\"]+)\"",function(s)return (string.format("\"%s\"",s:match("([^/]+)$")))end)
+      :gsub("[\t ]+","")
+      :gsub("\n+","\n")
+      :gsub("^\n",""):gsub("\n$","")
+      :gsub("<","{"):gsub("/>","}"):gsub(">",""):gsub("\n",",\n")
+      import "androidx"
+      EditorUtil.switchEditor("LayoutView")--将编辑器切换为Lua编辑器
+      oldThemeId=activity.getThemeResId()
+      if ThemeUtil.NowAppTheme.night then
+        activity.setTheme(R.style.Theme_MaterialComponents)
+       else
+        activity.setTheme(R.style.Theme_MaterialComponents_Light)
+      end
+      local layout=loadlayout2(assert(loadstring(layout))(),{},nil,NowProjectDirectory.getPath())
+      --NowEditor.removeAllViews()
+      NowEditor.addView(layout)
 
+    end
     return true
+  end,
+  xmlFinish=function()
+    if oldThemeId then
+      activity.setTheme(oldThemeId)
+    end
+  end,
+  xmlExit=function()
+    if xmlPreviewMode=="layout" then
+      NowEditor.removeAllViews()
+    end
+    xmlPreviewMode=nil
   end,
 }
 
@@ -111,6 +152,15 @@ EditorUtil.TextFileType2EditorLanguage={
 }
 
 function EditorUtil.switchEditor(editorType,language)
+  if EditorUtil.isPreviewing then
+    local exitFunc=EditorUtil.PreviewFunc[NowFileType.."Exit"]
+    if exitFunc then
+      exitFunc()
+    end
+    editChip.setChecked(true)
+    EditorUtil.isPreviewing=false
+  end
+
   for index,content in pairs(EditorUtil.EditorsGroup) do
     if editorType==index then
       local editor=EditorUtil.Editors[editorType]
@@ -139,9 +189,14 @@ function EditorUtil.switchEditor(editorType,language)
   return EditorUtil
 end
 
-function EditorUtil.switchPreview(fileType,isPreview)
-  if isPreview then
-    local succeed,oldThemeId
+function EditorUtil.switchEditorByFileType(fileType)
+  EditorUtil.switchEditor(EditorUtil.TextFileType2EditorType[fileType],EditorUtil.TextFileType2EditorLanguage[fileType])--switchEditor自带关闭预览
+end
+
+function EditorUtil.switchPreview(isPreview)
+  local fileType=NowFileType
+  if isPreview and not(EditorUtil.isPreviewing) then
+    local succeed,oldThemeId,errorString
     if OpenedFile and IsEdtor then
       succeed=saveFile()
      else
@@ -150,25 +205,35 @@ function EditorUtil.switchPreview(fileType,isPreview)
     if succeed then
       local finishFunc=EditorUtil.PreviewFunc[fileType.."Finish"]
       xpcall(function()
-        EditorUtil.PreviewFunc[fileType]()
+        if not(EditorUtil.PreviewFunc[fileType]()) then
+          error("Content not supported")
+        end
       end,
       function(err)
-        AlertDialog.Builder(this)
-        .setTitle("Preview error")
-        .setMessage(err)
-        .setPositiveButton(android.R.string.ok,nil)
-        .show()
+        errorString=err
       end)
       if finishFunc then
         finishFunc()
       end
+      if errorString then
+        AlertDialog.Builder(this)
+        .setTitle("Preview error")
+        .setMessage(errorString)
+        .setPositiveButton(android.R.string.ok,nil)
+        .show()
+        if errorString:find(": Content not supported$") then
+          editChip.setChecked(true)
+          return
+        end
+      end
+     else
+      editChip.setChecked(true)
+      return
     end
-   else
-    local exitFunc=EditorUtil.PreviewFunc[fileType.."Exit"]
-    if exitFunc then
-      exitFunc()
-    end
-    EditorUtil.switchEditor(EditorUtil.TextFileType2EditorType[fileType],EditorUtil.TextFileType2EditorLanguage[fileType])--将编辑器切换为Lua编辑器
+    EditorUtil.isPreviewing=isPreview
+    previewChip.setChecked(true)
+   elseif not(isPreview) and EditorUtil.isPreviewing then
+    EditorUtil.switchEditorByFileType(fileType)--自带关闭预览
   end
   return EditorUtil
 end
