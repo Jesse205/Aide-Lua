@@ -944,6 +944,38 @@ previewChip.onClick=function()
   EditorUtil.switchPreview(true)
 end
 
+import "android.provider.DocumentsContract"
+recyclerView.onDrag=function(view,event)
+  local action=event.getAction()
+  if action==DragEvent.ACTION_DRAG_STARTED then
+    local desc=event.getClipDescription()--必须有描述，必须为文件
+    if not(desc and desc.getMimeTypeCount()~=0 and desc.getMimeType(0)~="text/plain") then
+      return false
+    end
+   elseif action==DragEvent.ACTION_DRAG_ENTERED then
+    view.setBackgroundColor(theme.color.rippleColorAccent)
+   elseif action==DragEvent.ACTION_DRAG_EXITED then
+    view.setBackgroundColor(0)
+   elseif action==DragEvent.ACTION_DROP then
+    view.setBackgroundColor(0)
+    local data=event.getClipData()
+    local count=data.getItemCount()
+    if count>0 then
+      import "com.Jesse205.FileInfoUtils"
+      print(event)
+      for index=0,count-1 do
+        local uri=data.getItemAt(index).getUri()
+        print(uri)
+        --activity.getContentResolver().takePersistableUriPermission(uri,Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+        print(application.getContentResolver().openInputStream(uri))
+        --print(DocumentsContract.isDocumentUri(activity, uri))
+        --print(FileInfoUtils.getPath(activity,uri))
+      end
+    end
+  end
+  return true
+end
+
 screenConfigDecoder=ScreenFixUtil.ScreenConfigDecoder({
   onDeviceChanged=function(device,oldDevice)
     if device=="phone" then--切换为手机时

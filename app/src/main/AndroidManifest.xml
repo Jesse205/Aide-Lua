@@ -51,6 +51,7 @@
         android:label="@string/app_name"
         android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true"
+        android:preserveLegacyExternalStorage="true"
         android:theme="@style/Theme.Jesse205.DayNight">
 
         <uses-library
@@ -122,13 +123,21 @@
             android:exported="false"
             android:grantUriPermissions="true"
             android:name="android.content.FileProvider">
-
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/androlua_filepaths"/>
-
         </provider>
 
+        <provider
+            android:authorities="com.Jesse205.aidelua2"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            android:name="androidx.core.content.FileProvider">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/androlua_filepaths"/>
+        </provider>
+        
     </application>
 
 </manifest>

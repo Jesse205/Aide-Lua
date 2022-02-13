@@ -17,36 +17,33 @@ public class FileInfoUtils {
      */
     @SuppressLint("NewApi")
     public static String getPath(final Context context, final Uri uri) {
-        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
         // DocumentProvider
-        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+        final String authority=uri.getAuthority();
+        if (DocumentsContract.isDocumentUri(context, uri)) {
             // ExternalStorageProvider
-            if (isExternalStorageDocument(uri)) {
-                final String docId = DocumentsContract.getDocumentId(uri);
+            final String docId = DocumentsContract.getDocumentId(uri);
+            if (isExternalStorageDocument(authority)) {
                 final String[] split = docId.split(":");
                 final String type = split[0];
-
                 if ("primary".equalsIgnoreCase(type)) {
                     return Environment.getExternalStorageDirectory() + "/" + split[1];
                 }
             }
             // DownloadsProvider
-            else if (isDownloadsDocument(uri)) {
-                final String id = DocumentsContract.getDocumentId(uri);
+            else if (isDownloadsDocument(authority)) {
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O){//判断有没有超过android 8，区分开来，不然崩溃崩溃崩溃崩溃
                     final Uri contentUri = ContentUris.withAppendedId(
-                        Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+                        Uri.parse("content://downloads/public_downloads"), Long.valueOf(docId));
                     return getDataColumn(context, contentUri, null, null);
                 }else{
-                    final String[] split = id.split(":");
+                    final String[] split = docId.split(":");
                     if (split.length>=2){
                         return split[1];
                     }
                 }
             }
             // MediaProvider
-            else if (isMediaDocument(uri)) {
-                final String docId = DocumentsContract.getDocumentId(uri);
+            else if (isMediaDocument(authority)) {
                 final String[] split = docId.split(":");
                 final String type = split[0];
 
@@ -67,16 +64,11 @@ public class FileInfoUtils {
         }
         // MediaStore (and general)
         else if ("content".equalsIgnoreCase(uri.getScheme())) {
-            // Return the remote address
-            /*if (isGooglePhotosUri(uri)) {
-             return uri.getLastPathSegment();
-             } else*/
-            //判断华为手机的uri，重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点重点
-            if (isHuaWeiUri(uri)) {
+            if (isHuaWeiUri(authority)) {
                 String uriPath = uri.getPath();
                 //content://com.huawei.hidisk.fileprovider/root/storage/emulated/0/Android/data/com.xxx.xxx/
                 if (uriPath != null && uriPath.startsWith("/root")) {
-                    return uriPath.replaceAll("/root", "");
+                    return uriPath.replaceFirst("/root", "");
                 }
             }
             return getDataColumn(context, uri, null, null);
@@ -110,12 +102,12 @@ public class FileInfoUtils {
 
 
 
-    public static boolean isGooglePhotosUri(Uri uri) {
-        return "com.google.android.apps.photos.content".equals(uri.getAuthority());
+    public static boolean isGooglePhotosUri(String authority) {
+        return "com.google.android.apps.photos.content".equals(authority);
     }
 
-    public static boolean isHuaWeiUri(Uri uri) {
-        return "com.huawei.hidisk.fileprovider".equals(uri.getAuthority());
+    public static boolean isHuaWeiUri(String authority) {
+        return "com.huawei.hidisk.fileprovider".equals(authority)&"com.huawei.filemanager.share.fileprovider".equals(authority);
     }
 
     /**
@@ -123,9 +115,8 @@ public class FileInfoUtils {
      * @return Whether the Uri authority is ExternalStorageProvider.
      */
 
-
-    public static boolean isExternalStorageDocument(Uri uri) {
-        return "com.android.externalstorage.documents".equals(uri.getAuthority());
+    public static boolean isExternalStorageDocument(String authority) {
+        return "com.android.externalstorage.documents".equals(authority);
 
     }
 
@@ -134,9 +125,8 @@ public class FileInfoUtils {
      * @return Whether the Uri authority is DownloadsProvider.
      */
 
-
-    public static boolean isDownloadsDocument(Uri uri) {
-        return "com.android.providers.downloads.documents".equals(uri.getAuthority());
+    public static boolean isDownloadsDocument(String authority) {
+        return "com.android.providers.downloads.documents".equals(authority);
 
     }
 
@@ -145,9 +135,8 @@ public class FileInfoUtils {
      * @return Whether the Uri authority is MediaProvider.
      */
 
-
-    public static boolean isMediaDocument(Uri uri) {
-        return "com.android.providers.media.documents".equals(uri.getAuthority());
+    public static boolean isMediaDocument(String authority) {
+        return "com.android.providers.media.documents".equals(authority);
 
     }
 

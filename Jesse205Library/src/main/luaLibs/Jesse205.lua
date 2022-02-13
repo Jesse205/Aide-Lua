@@ -1,7 +1,7 @@
 local Jesse205={}
 _G.Jesse205=Jesse205
-Jesse205._VERSION="10.1.1(Pro)"--库版本名
-Jesse205._VERSIONCODE=101199--库版本号
+Jesse205._VERSION="10.1.2(Pro)"--库版本名
+Jesse205._VERSIONCODE=101299--库版本号
 Jesse205._ENV=_ENV
 Jesse205.themeType="Jesse205"--主题类型
 
