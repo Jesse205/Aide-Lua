@@ -85,35 +85,8 @@
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:label="@string/app_name"
-            android:name="com.Jesse205.superlua.LuaActivity">
-            <intent-filter>
-                <action 
-                    android:name="android.intent.action.VIEW" />
-                <action 
-                    android:name="android.intent.action.EDIT" />
-                <category 
-                    android:name="android.intent.category.DEFAULT" />
-                <category 
-                    android:name="android.intent.category.BROWSABLE" />
-                <data android:mimeType="application/lua" />
-                <data android:scheme="file" />
-                <data android:scheme="content" />
-                <data android:host="*" />
-            </intent-filter>
-            <intent-filter>
-                <action 
-                    android:name="android.intent.action.VIEW" />
-                <category 
-                    android:name="android.intent.category.DEFAULT" />
-                <category 
-                    android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="file" />
-                <data android:scheme="content" />
-                <data android:mimeType="text/*" />
-                <data android:host="*" />
-                <data android:pathPattern=".*\\.lua" />
-            </intent-filter>
-        </activity>
+            android:exported="true"
+            android:name="com.Jesse205.superlua.LuaActivity"/>
 
         <activity
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize"
@@ -121,35 +94,8 @@
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:excludeFromRecents="false"
             android:label="@string/app_name"
-            android:name="com.Jesse205.superlua.LuaActivityX">
-            <intent-filter>
-                <action 
-                    android:name="android.intent.action.VIEW" />
-                <action 
-                    android:name="android.intent.action.EDIT" />
-                <category 
-                    android:name="android.intent.category.DEFAULT" />
-                <category 
-                    android:name="android.intent.category.BROWSABLE" />
-                <data android:mimeType="application/lua" />
-                <data android:scheme="file" />
-                <data android:scheme="content" />
-                <data android:host="*" />
-            </intent-filter>
-            <intent-filter>
-                <action 
-                    android:name="android.intent.action.VIEW" />
-                <category 
-                    android:name="android.intent.category.DEFAULT" />
-                <category 
-                    android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="file" />
-                <data android:scheme="content" />
-                <data android:mimeType="text/*" />
-                <data android:host="*" />
-                <data android:pathPattern=".*\\.lua" />
-            </intent-filter>
-        </activity>
+            android:exported="true"
+            android:name="com.Jesse205.superlua.LuaActivityX"/>
 
         <activity
             android:label="@string/app_name"
@@ -162,117 +108,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        
-        <activity
-            android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize"
-            android:label="@string/app_name"
-            android:launchMode="singleTask"
-            android:windowSoftInputMode="adjustResize|stateHidden"
-            android:name="com.androlua.Main"/>
-
-        <activity
-            android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize"
-            android:windowSoftInputMode="adjustResize|stateHidden"
-            android:label="@string/app_name"
-            android:name="com.androlua.LuaActivity">
-
-            <intent-filter>
-
-                <action android:name="android.intent.action.VIEW"/>
-
-                <action android:name="android.intent.action.EDIT"/>
-
-                <category android:name="android.intent.category.DEFAULT"/>
-
-                <category android:name="android.intent.category.BROWSABLE"/>
-
-                <data android:mimeType="application/lua"/>
-
-                <data android:scheme="file"/>
-
-                <data android:scheme="content"/>
-
-                <data android:host="*"/>
-
-            </intent-filter>
-
-            <intent-filter>
-
-                <action android:name="android.intent.action.VIEW"/>
-
-                <category android:name="android.intent.category.DEFAULT"/>
-
-                <category android:name="android.intent.category.BROWSABLE"/>
-
-                <data android:scheme="file"/>
-
-                <data android:scheme="content"/>
-
-                <data android:mimeType="text/*"/>
-
-                <data android:host="*"/>
-
-                <data android:pathPattern=".*\\.lua"/>
-
-            </intent-filter>
-
-        </activity>
-
-        <activity
-            android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize"
-            android:documentLaunchMode="intoExisting"
-            android:windowSoftInputMode="adjustResize|stateHidden"
-            android:excludeFromRecents="false"
-            android:label="@string/app_name"
-            android:name="com.androlua.LuaActivityX">
-
-            <intent-filter>
-
-                <action android:name="android.intent.action.VIEW"/>
-
-                <action android:name="android.intent.action.EDIT"/>
-
-                <category android:name="android.intent.category.DEFAULT"/>
-
-                <category android:name="android.intent.category.BROWSABLE"/>
-
-                <data android:mimeType="application/lua"/>
-
-                <data android:scheme="file"/>
-
-                <data android:scheme="content"/>
-
-                <data android:host="*"/>
-
-            </intent-filter>
-
-            <intent-filter>
-
-                <action android:name="android.intent.action.VIEW"/>
-
-                <category android:name="android.intent.category.DEFAULT"/>
-
-                <category android:name="android.intent.category.BROWSABLE"/>
-
-                <data android:scheme="file"/>
-
-                <data android:scheme="content"/>
-
-                <data android:mimeType="text/*"/>
-
-                <data android:host="*"/>
-
-                <data android:pathPattern=".*\\.lua"/>
-
-            </intent-filter>
-
-        </activity>
-
-        <activity
-            android:label="@string/app_name"
-            android:windowSoftInputMode="adjustResize|stateHidden"
-            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|navigation|screenLayout|fontScale|smallestScreenSize|keyboardHidden|orientation|screenSize"
-            android:name="com.androlua.Welcome"/>
 
         <activity
             android:name="com.nirenr.screencapture.ScreenCaptureActivity"
