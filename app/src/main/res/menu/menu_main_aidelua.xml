@@ -75,6 +75,14 @@
         </menu>
     </item>
     
+    <!--插件 子菜单-->
+    <item
+        android:id="@+id/subMenu_plugins"
+        app:showAsAction="@integer/Jesse205_menu_showAsAction_800dp"
+        android:title="@string/plugins_popup">
+        <menu>
+        </menu>
+    </item>
 
     <!--工具 子菜单-->
     <item

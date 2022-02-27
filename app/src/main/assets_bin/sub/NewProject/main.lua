@@ -25,7 +25,7 @@ OpenedSLibs={}
 local cannotBeEmptyStr=activity.getString(R.string.Jesse205_edit_error_cannotBeEmpty)
 
 activity.setTitle(R.string.project_create)
-activity.setContentView(loadlayout("layout"))
+activity.setContentView(loadlayout2("layout"))
 actionBar.setDisplayHomeAsUpEnabled(true)
 
 function onOptionsItemSelected(item)
@@ -63,7 +63,7 @@ function onSLibCheckChanged(view,isChecked)
 end
 
 function addChip(title,config,group)
-  local chip=loadlayout({
+  local chip=loadlayout2({
     Chip;
     text=title;
     tag=config;
@@ -82,7 +82,7 @@ function addChip(title,config,group)
 end
 
 function addChoiceChip(title,group,identification)
-  local chip=loadlayout({
+  local chip=loadlayout2({
     Chip;
     text=title;
     --tag=config;

@@ -208,7 +208,7 @@ return function(data,item)
     end,
     onCreateViewHolder=function(parent,viewType)
       local ids={}
-      local view=loadlayout(item[viewType],ids)
+      local view=loadlayout2(item[viewType],ids)
       local holder=LuaCustRecyclerHolder(view)
       view.setTag(ids)
       view.setBackground(ThemeUtil.getRippleDrawable(theme.color.rippleColorPrimary,true))
@@ -222,7 +222,8 @@ return function(data,item)
 
     onBindViewHolder=function(holder,position)
       local data={position=position}
-      local tag=holder.view.getTag()
+      local view=holder.view
+      local tag=view.getTag()
       tag._data=data
       if position==0 then--是第一项
         if OpenedProject then
@@ -235,6 +236,7 @@ return function(data,item)
           data.fileName=".."
           data.upFile=true
           data.action="openFolder"
+          view.contentDescription=activity.getString(R.string.file_up)
          else
           tag.icon.setImageResource(R.drawable.ic_plus)
           tag.title.text=activity.getString(R.string.project_create)

@@ -1,0 +1,13 @@
+{
+  CoordinatorLayout;
+  layout_height="fill";
+  layout_width="fill";
+  id="mainLay";
+  {
+    TextView;
+    gravity="center";
+    text="Hello World";
+    layout_height="fill";
+    layout_width="fill";
+  };
+}

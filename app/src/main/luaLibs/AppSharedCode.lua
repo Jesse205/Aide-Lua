@@ -23,3 +23,7 @@ function newLayoutTransition()
 end
 
 
+
+import "PluginsUtil"
+
+--PluginsUtil.loadPlugins()

@@ -4,3 +4,5 @@ keys={
             android:enabled="true" 
             android:name="com.androlua.LuaService" />]],},
 }
+
+support="all"

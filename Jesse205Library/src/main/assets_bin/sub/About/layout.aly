@@ -7,7 +7,7 @@
     LinearLayoutCompat;
     layout_height="fill";
     layout_width="fill";
-    orientation="vertical";
+    --orientation="vertical";
     id="mainLayChild";
     {
       CardView;
@@ -44,10 +44,25 @@
       };
     };
     {
-      RecyclerView;
+      LinearLayoutCompat;
       layout_height="fill";
       layout_width="fill";
-      id="recyclerView";
+      orientation="vertical";
+      {
+        CardView;
+        layout_height=1;
+        layout_width="fill";
+        id="appBarElevationCard";
+        radius=0;
+        elevation=0;
+        visibility=View.GONE;
+      };
+      {
+        RecyclerView;
+        layout_height="fill";
+        layout_width="fill";
+        id="recyclerView";
+      };
     };
   };
 };

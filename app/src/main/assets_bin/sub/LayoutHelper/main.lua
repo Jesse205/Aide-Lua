@@ -22,7 +22,7 @@ import "android.util.*"
 
 import "com.Jesse205.layout.MyEditDialogLayout"
 
-import "loadlayout2"
+import "loadpreviewlayout"
 require "xml2table"
 import "layout"
 
@@ -63,7 +63,7 @@ function onCreate()
    else
     activity.setTheme(R.style.Theme_MaterialComponents_Light)
   end
-  activity.setContentView(loadlayout2(layout.main,{}))
+  activity.setContentView(loadpreviewlayout(layout.main,{}))
   activity.setTheme(oldThemeId)
 end
 
@@ -278,7 +278,7 @@ xpcall(function()
    else
     activity.setTheme(R.style.Theme_MaterialComponents_Light)
   end
-  activity.setContentView(loadlayout2(layout.main,{}))
+  activity.setContentView(loadpreviewlayout(layout.main,{}))
   activity.setTheme(oldThemeId)
 end,
 function()
@@ -448,7 +448,7 @@ check_list.onItemClick=function(l,v,p,i)
    else
     activity.setTheme(R.style.Theme_MaterialComponents_Light)
   end
-  local s,l=pcall(loadlayout2,layout.main,{})
+  local s,l=pcall(loadpreviewlayout,layout.main,{})
   if s then
     activity.setContentView(l)
    else
@@ -496,7 +496,7 @@ func["删除"]=function()
    else
     activity.setTheme(R.style.Theme_MaterialComponents_Light)
   end
-  activity.setContentView(loadlayout2(layout.main,{}))
+  activity.setContentView(loadpreviewlayout(layout.main,{}))
   activity.setTheme(oldThemeId)
 end
 
@@ -571,7 +571,7 @@ el.onChildClick=function(l,v,g,c)
    else
     activity.setTheme(R.style.Theme_MaterialComponents_Light)
   end
-  local s,l=pcall(loadlayout2,layout.main,{})
+  local s,l=pcall(loadpreviewlayout,layout.main,{})
   if s then
     activity.setContentView(l)
    else
@@ -599,7 +599,7 @@ function ok()
    else
     activity.setTheme(R.style.Theme_MaterialComponents_Light)
   end
-  local s,l=pcall(loadlayout2,layout.main,{})
+  local s,l=pcall(loadpreviewlayout,layout.main,{})
   if s then
     activity.setContentView(l)
    else
@@ -620,7 +620,7 @@ function none()
    else
     activity.setTheme(R.style.Theme_MaterialComponents_Light)
   end
-  local s,l=pcall(loadlayout2,layout.main,{})
+  local s,l=pcall(loadpreviewlayout,layout.main,{})
   if s then
     activity.setContentView(l)
    else

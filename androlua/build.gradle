@@ -8,13 +8,20 @@ android {
         //applicationId "com.androlua"
         minSdkVersion 14
         targetSdkVersion 28
-        versionCode 1599
-        versionName "1.5(5.0.10)"
+        versionCode 1699
+        versionName "5.0.10(1.6)(armeabi-v7a)"
+        
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            ndk {abiFilters 'armeabi-v7a' ,'arm64-v8a'}
+            
+        }
+        debug {
+            minifyEnabled false
+            ndk {abiFilters 'armeabi-v7a' ,'arm64-v8a'}
         }
     }
     sourceSets {
@@ -24,10 +31,14 @@ android {
         }
 
     }
+    lintOptions {
+          abortOnError false
+    }
+    
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    api fileTree(dir: 'libs', include: ['*.jar'])
     api 'androidx.appcompat:appcompat:1.0.0'
     api 'com.google.android.material:material:1.0.0'
 }

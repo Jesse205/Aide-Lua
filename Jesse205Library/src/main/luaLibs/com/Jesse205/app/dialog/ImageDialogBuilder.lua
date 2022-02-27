@@ -12,7 +12,7 @@ function ImageDialogBuilder.show(self)
   local context=self.context
   local dialogBuilder=AlertDialog.Builder(context)
   local ids={}
-  dialogBuilder.setView(loadlayout(
+  dialogBuilder.setView(loadlayout2(
   {
     CardView;
     layout_width="fill";
@@ -23,7 +23,7 @@ function ImageDialogBuilder.show(self)
       layout_height="fill";
       id="imageView";
       imageResource=self.image;
-      adjustViewBounds="true"
+      adjustViewBounds=true;
     };
   },ids))
   local dialog=dialogBuilder.show()

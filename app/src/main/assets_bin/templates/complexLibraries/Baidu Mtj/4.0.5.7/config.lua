@@ -11,3 +11,4 @@ keys={
             android:name="BaiduMobAd_EXCEPTION_LOG"
             android:value="true"/>]],},
 }
+support="all"

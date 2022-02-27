@@ -29,7 +29,7 @@ function MyEditDialogLayout.Builder(config)--返回布局表
 end
 
 function MyEditDialogLayout.load(config,...)--返回视图
-  return loadlayout({
+  return loadlayout2({
     LinearLayout;
     layout_width="fill";
     layout_height="fill";

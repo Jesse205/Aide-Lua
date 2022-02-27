@@ -65,7 +65,7 @@ NowPage=nil
 AllNum=0
 
 activity.setTitle(R.string.javaApiViewer)
-activity.setContentView(loadlayout("layout"))
+activity.setContentView(loadlayout2("layout"))
 
 actionBar.setDisplayHomeAsUpEnabled(true)
 --actionBar.setElevation(0)

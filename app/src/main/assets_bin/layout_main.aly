@@ -16,18 +16,26 @@
     elevation=0;
     layoutTransition=newLayoutTransition();
     {
-      TabLayout;
+      LinearLayoutCompat;
+      layout_height="fill";
       layout_width="fill";
-      tabMode=TabLayout.MODE_SCROLLABLE;
-      --layout_margin="8dp";
-      layout_height="32dp";
-      id="filesTabLay";
-      visibility=View.GONE;
-      inlineLabel=true;
-      paddingLeft="8dp";
-      paddingRight="8dp";
-      clipToPadding=false;
+      orientation="vertical";
+      id="appBarLinearLayout";
       layoutTransition=newLayoutTransition();
+      {
+        TabLayout;
+        layout_width="fill";
+        tabMode=TabLayout.MODE_SCROLLABLE;
+        --layout_margin="8dp";
+        layout_height="32dp";
+        id="filesTabLay";
+        visibility=View.GONE;
+        inlineLabel=true;
+        paddingLeft="8dp";
+        paddingRight="8dp";
+        clipToPadding=false;
+        layoutTransition=newLayoutTransition();
+      };
     };
   };
   {
@@ -57,6 +65,7 @@
         gravity="top|left";
         text=" ";
         textSize=0;
+        
       };
       {
         MyLuaEditor;
@@ -80,6 +89,7 @@
       layout_width="fill";
       layoutTransition=newLayoutTransition();
       id="codeEditorParent";
+      visibility=View.GONE;
       {
         MyCodeEditor;
         layout_height="fill";
@@ -97,6 +107,7 @@
       layout_width="fill";
       layoutTransition=newLayoutTransition();
       id="photoViewParent";
+      visibility=View.GONE;
       {
         PhotoView;
         layout_height="fill";
@@ -110,22 +121,9 @@
       layout_height="fill";
       layout_width="fill";
       id="layoutView";
+      visibility=View.GONE;
     };
     "layout_previewChips";
-    {
-      TextView;
-      text="Aide Lua 安全模式";
-      textSize="16sp";
-      padding="4dp";
-      paddingLeft="6dp";
-      paddingRight="6dp";
-      layout_gravity="left|bottom";
-      id="safeModeText";
-      textColor=0xff000000;
-      backgroundColor=0xcceeeeee;
-      clickable=true;
-      tooltip="安全模式可以屏蔽很多效果，可以解决很多问题。如要退出安全模式，请删除 /sdcard/aidelua_safemode ，然后重启应用";
-    };
   };
   {
     CardView;
@@ -137,18 +135,26 @@
     layout_height="40dp";
     layoutTransition=newLayoutTransition();
     {
-      HorizontalScrollView;
-      horizontalScrollBarEnabled=false;
-      layout_width="fill";
+      LinearLayoutCompat;
       layout_height="fill";
-      paddingLeft="8dp";
-      paddingRight="8dp";
-      clipToPadding=false;
+      layout_width="fill";
+      orientation="vertical";
+      id="bottomAppBarLinearLayout";
+      layoutTransition=newLayoutTransition();
       {
-        LinearLayoutCompat;
-        layout_height="fill";
+        HorizontalScrollView;
+        horizontalScrollBarEnabled=false;
         layout_width="fill";
-        id="ps_bar";
+        layout_height="fill";
+        paddingLeft="8dp";
+        paddingRight="8dp";
+        clipToPadding=false;
+        {
+          LinearLayoutCompat;
+          layout_height="fill";
+          layout_width="fill";
+          id="ps_bar";
+        };
       };
     };
   };

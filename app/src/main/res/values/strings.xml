@@ -15,7 +15,6 @@
     <string name="code_popup">Code...</string>
     <string name="check_import">Analysis import</string>
     <string name="tools_popup">Tools...</string>
-    <string name="settings">Settings</string>
     <string name="reminder">Tips</string>
     <string name="unknown">(Unknow)</string>
     <string name="unknowError">Unknown error</string>
@@ -54,6 +53,7 @@
     <string name="drawer_close">Open drawer</string>
 
     <string name="file">File</string>
+    <string name="file_up">Return to the previous directory</string>
     <string name="file_popup">File...</string>
     <string name="file_cannot_open_compiled_file">"Can't open the compiled file."</string>   
     <string name="file_not_find">File not found</string>
@@ -137,6 +137,7 @@
     <string name="checkCode">Check for errors</string>
     <string name="checkCode_noGrammaticalErrors">There are no grammatical errors.</string>
     
+    <string name="settings">Settings</string>
     <string name="settings_ui_richAnim">Rich animation</string>
     <string name="settings_editor_highlight_Jesse205Library">Jesse205Library code tips</string>
     <string name="settings_editor_highlight_Jesse205Library_summary">Show advanced usage of Jesse205Library.</string>
@@ -149,6 +150,7 @@
     <string name="settings_needRestart">Restart and take effect after modification</string>
     <string name="settings_addComplexLibrary">Add complex library</string>
     <string name="settings_addComplexLibrary_summary">You can use your own complex library in functions such as "new project"</string>
+    <string name="settings_editor_previewButton">Preview button</string>
     
     <string name="window_openNew">Open a new window</string>
     <string name="window_openInNewWindow">Open in a new window</string>
@@ -160,4 +162,9 @@
     <string name="runCode">Run the code</string>
     <string name="runCode_noApp">In order for you to better debug the software, please package and install the project first, and open LuaActivity.</string>
     <string name="runCode_noPackageName">For you to better debug the software, please check whether the packageName of config.lua exists.</string>
+
+    <string name="plugins">Plugins</string>
+    <string name="plugins_popup">Plugins...</string>
+    <string name="plugins_manager">Plugins Manager</string>
+    
 </resources>

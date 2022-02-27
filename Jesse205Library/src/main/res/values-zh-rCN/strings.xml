@@ -23,7 +23,7 @@
     <string name="Jesse205_qqGroups">QQ交流群</string>
     <string name="Jesse205_noQQ">未安装QQ</string>
     <string name="Jesse205_copyright">版权信息</string>
-    <string name="Jesse205_donate">支持项目</string>
+    <string name="Jesse205_supportProject">支持项目</string>
     <string name="Jesse205_htmlFileViewer">HTML查看器</string>
     <string name="Jesse205_openSourceLicense">开源许可</string>
     <string name="Jesse205_welcome">欢迎</string>
@@ -31,7 +31,6 @@
     <string name="Jesse205_allReady_tips">点击“完成”按钮开始体验吧！</string>
     <string name="Jesse205_permission">权限申请</string>
     <string name="Jesse205_permission_tips">部分权限不给予将可能导致软件出错</string>
-    <string name="Jesse205_permission">权限申请</string>
     <string name="Jesse205_permission_requestAll">全部给予</string>
     <string name="Jesse205_permission_requestAll_tips">一键给予全部权限</string>
     <string name="Jesse205_agreement_checkBox">我已阅读并同意%1$s</string>

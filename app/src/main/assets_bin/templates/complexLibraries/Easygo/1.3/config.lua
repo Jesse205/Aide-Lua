@@ -8,3 +8,4 @@ keys={
 format={
   "app/src/main/assets_bin/easygo.json",
 }
+support="all"

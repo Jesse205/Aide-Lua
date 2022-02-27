@@ -28,6 +28,7 @@ StatService.start(activity)
 
 import "android.text.TextUtils$TruncateAt"
 import "android.content.ComponentName"
+import "android.provider.DocumentsContract"
 import "androidx.drawerlayout.widget.DrawerLayout"
 
 --import "com.google.android.material.textfield.*"
@@ -56,6 +57,7 @@ import "com.Jesse205.app.actionmode.SearchActionMode"
 import "com.Jesse205.app.dialog.EditDialogBuilder"
 import "com.Jesse205.util.FileUtil"
 import "com.Jesse205.util.ScreenFixUtil"
+import "com.Jesse205.FileInfoUtils"
 
 import "ProjectUtil"
 import "ReBuildTool"
@@ -72,9 +74,11 @@ import "getImportCode"
 
 import "item"
 
-import "sub.LayoutHelper2.loadlayout2"
+import "sub.LayoutHelper2.loadpreviewlayout"
 
 import "adapter.FileListAdapter"
+
+PluginsUtil.setActivityName("main")
 
 --申请存储权限
 PermissionUtil.smartRequestPermission({"android.permission.WRITE_EXTERNAL_STORAGE","android.permission.READ_EXTERNAL_STORAGE"})
@@ -114,7 +118,7 @@ OpenedProject=false--是否打开了工程
 OpenedFile=false--是否打开了文件
 AppName=nil
 
-DirDatas=nil
+DirData=nil
 
 --FilesDataList={}
 
@@ -134,6 +138,7 @@ oldDarkActionBar=getSharedData("theme_darkactionbar")
 oldRichAnim=getSharedData("richAnim")
 oldTabIcon=getSharedData("tab_icon")
 oldEditorSymbolBar=getSharedData("editor_symbolBar")
+oldEditorPreviewButton=getSharedData("editor_previewButton")
 
 --editor_magnify=getSharedData("editor_magnify")
 
@@ -174,7 +179,7 @@ MyLuaEditor=editor2my(LuaEditor)
 MyCodeEditor=editor2my(CodeEditor)
 
 activity.setTitle(R.string.app_name)
-activity.setContentView(loadlayout("layout"))
+activity.setContentView(loadlayout2("layout"))
 actionBar.setTitle(R.string.app_name)
 actionBar.setDisplayHomeAsUpEnabled(true)
 
@@ -244,7 +249,9 @@ function onCreate(savedInstanceState)
    else
     closeProject()
     refresh()
+    editorFunc.open(true)
   end
+  return PluginsUtil.callElevents("onCreate",savedInstanceState)
 end
 
 function onCreateOptionsMenu(menu)
@@ -273,6 +280,7 @@ function onCreateOptionsMenu(menu)
     [600]={binRunMenu,codeMenu,toolsMenu},
     [800]={fileMenu,projectMenu,moreMenu},
   }
+  PluginsUtil.callElevents("onCreateOptionsMenu",menu)
 
   LoadedMenu=true
   refreshMenusState()--刷新Menu状态
@@ -385,6 +393,7 @@ function onOptionsItemSelected(item)
    elseif id==Rid.menu_more_openNewWindow then--打开新窗口
     activity.newActivity("main",{ProjectsPath},true)
   end
+  return PluginsUtil.callElevents("onOptionsItemSelected",item)
 end
 
 function onKeyShortcut(keyCode,event)
@@ -413,6 +422,7 @@ function onKeyShortcut(keyCode,event)
       return true
     end
   end
+  return PluginsUtil.callElevents("onKeyShortcut",keyCode,event)
 end
 
 
@@ -439,6 +449,7 @@ function onConfigurationChanged(config)
   MyAnimationUtil.ScrollView.onScrollChange(NowEditor,NowEditor.getScrollX(),NowEditor.getScrollY(),0,0,appBarLayout,nil)
   refreshSubTitle()
   refreshMoveCloseHeight(config.screenHeightDp)
+  return PluginsUtil.callElevents("onConfigurationChanged",config)
 end
 
 notFirstOnResume=false
@@ -481,6 +492,7 @@ function onResume()
   if magnifier then--刷新放大镜状态
     editor_magnify=getSharedData("editor_magnify")
   end
+
   if notFirstOnResume then
     if notSafeModeEnable then
       --task(500,refresh)--刷新列表
@@ -507,6 +519,20 @@ function onResume()
       if oldEditorSymbolBar~=newEditorSymbolBar then
         oldEditorSymbolBar=newEditorSymbolBar
         refreshSymbolBar(newEditorSymbolBar)
+      end
+      local newEditorPreviewButton=getSharedData("editor_previewButton")
+      if oldEditorPreviewButton~=newEditorPreviewButton then
+        if newEditorPreviewButton then
+          if ProjectUtil.SupportPreviewType[NowFileType] then
+            previewChipCardView.setVisibility(View.VISIBLE)
+           else
+            previewChipCardView.setVisibility(View.GONE)
+          end
+         else
+          previewChipCardView.setVisibility(View.GONE)
+          EditorUtil.switchPreview(false)
+        end
+        oldEditorPreviewButton=newEditorPreviewButton
       end
 
     end
@@ -585,6 +611,9 @@ function onVersionChanged()
   checkUpdateSharedActivity("LogCat")
 end
 
+function onRestoreInstanceState(savedInstanceState)
+  toggle.syncState()
+end
 --onConfigurationChanged(activity.getResources().getConfiguration())
 
 drawerOpened=drawer.isDrawerOpen(Gravity.LEFT)
@@ -621,12 +650,12 @@ swipeRefresh.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener{onRefresh
     refresh(nil,nil,true)
   end
 })
-MyStyleUtil.appliedToSwipeRefreshLayout(swipeRefresh)
+MyStyleUtil.applyToSwipeRefreshLayout(swipeRefresh)
 
-DirDatas={}
-adp=FileListAdapter(DirDatas,item)
+DirData={}
+adp=FileListAdapter(DirData,item)
 recyclerView.setAdapter(adp)
-layoutManager=StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.VERTICAL)
+layoutManager=LinearLayoutManager()
 recyclerView.setLayoutManager(layoutManager)
 recyclerView.addOnScrollListener(RecyclerView.OnScrollListener{
   onScrolled=function(view,dx,dy)
@@ -693,7 +722,7 @@ pathsTabLay.addOnTabSelectedListener(TabLayout.OnTabSelectedListener({
 --application.set("luaeditor_initialized",false)--强制初始化编辑器
 --设置编辑器
 if notSafeModeEnable then
-  safeModeText.setVisibility(View.GONE)
+  --safeModeText.setVisibility(View.GONE)
   if not(application.get("luaeditor_initialized")) then--编辑器未初始化
     luaEditorParent.removeView(luaEditorPencilEdit)
     luaEditorParent.removeView(luaEditor)
@@ -869,7 +898,20 @@ if notSafeModeEnable then
     end
   end
  else
-  safeModeText.setForeground(ThemeUtil.getRippleDrawable(theme.color.rippleColorPrimary))
+  editorGroup.addView(loadlayout2({
+    TextView;
+    text="Aide Lua 安全模式";
+    textSize="16sp";
+    padding="4dp";
+    paddingLeft="6dp";
+    paddingRight="6dp";
+    layout_gravity="left|bottom";
+    id="safeModeText";
+    textColor=0xff000000;
+    backgroundColor=0xcceeeeee;
+    clickable=true;
+    tooltip="安全模式可以屏蔽很多效果，可以解决很多问题。如要退出安全模式，请删除 /sdcard/aidelua_safemode ，然后重启应用";
+  },nil,CoordinatorLayout))
   luaEditorParent.removeView(luaEditorProgressBar)
 end
 
@@ -944,7 +986,6 @@ previewChip.onClick=function()
   EditorUtil.switchPreview(true)
 end
 
-import "android.provider.DocumentsContract"
 recyclerView.onDrag=function(view,event)
   local action=event.getAction()
   if action==DragEvent.ACTION_DRAG_STARTED then
@@ -958,20 +999,33 @@ recyclerView.onDrag=function(view,event)
     view.setBackgroundColor(0)
    elseif action==DragEvent.ACTION_DROP then
     view.setBackgroundColor(0)
+    local dropPermissions=activity.requestDragAndDropPermissions(event)
     local data=event.getClipData()
     local count=data.getItemCount()
     if count>0 then
-      import "com.Jesse205.FileInfoUtils"
-      print(event)
       for index=0,count-1 do
+        local nameFile
         local uri=data.getItemAt(index).getUri()
-        print(uri)
-        --activity.getContentResolver().takePersistableUriPermission(uri,Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-        print(application.getContentResolver().openInputStream(uri))
+        local inputStream=activity.getContentResolver().openInputStream(uri)
+        if DocumentsContract.isDocumentUri(activity, uri) then
+          nameFile=File(FileInfoUtils.getPath(activity,uri))
+         else
+          nameFile=File(uri.getPath())
+        end
+        local newPath=NowDirectory.getPath().."/"..nameFile.getName()
+        if File(newPath).exists() then
+          showSnackBar(R.string.file_exists)
+         else
+          local outStream=FileOutputStream(newPath)
+          LuaUtil.copyFile(inputStream, outStream)
+          outStream.close()
+          refresh()
+        end
         --print(DocumentsContract.isDocumentUri(activity, uri))
         --print(FileInfoUtils.getPath(activity,uri))
       end
     end
+    dropPermissions.release()
   end
   return true
 end

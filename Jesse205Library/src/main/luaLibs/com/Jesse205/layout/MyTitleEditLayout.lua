@@ -30,6 +30,6 @@ function MyTitleEditLayout.Builder(config)--返回布局表
 end
 
 function MyTitleEditLayout.load(config,...)--返回视图
-  return loadlayout(MyTitleEditLayout.Builder(config),...)
+  return loadlayout2(MyTitleEditLayout.Builder(config),...)
 end
 return MyTitleEditLayout

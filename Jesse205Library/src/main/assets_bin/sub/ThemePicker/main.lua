@@ -4,7 +4,7 @@ import "com.Jesse205.layout.innocentlayout.GridViewLayout"
 import "item"
 
 activity.setTitle(R.string.Jesse205_themePicker)
-activity.setContentView(loadlayout(GridViewLayout))
+activity.setContentView(loadlayout2(GridViewLayout))
 activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true)
 
 function onOptionsItemSelected()

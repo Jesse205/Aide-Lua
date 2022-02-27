@@ -285,10 +285,11 @@ SettingsLayUtil.itemsLay=itemsLay
 local function setAlpha(views,alpha)
   for index,content in pairs(views) do
     if content then
-    content.setAlpha(alpha)
+      content.setAlpha(alpha)
     end
   end
 end
+SettingsLayUtil.setAlpha=setAlpha
 
 function SettingsLayUtil.newAdapter(data,onItemClick)
   return LuaCustRecyclerAdapter(AdapterCreator({
@@ -300,7 +301,7 @@ function SettingsLayUtil.newAdapter(data,onItemClick)
     end,
     onCreateViewHolder=function(parent,viewType)
       local ids={}
-      local view=loadlayout(itemsLay[viewType],ids)
+      local view=loadlayout2(itemsLay[viewType],ids)
       local holder=LuaCustRecyclerHolder(view)
       view.setTag(ids)
       if viewType~=1 then

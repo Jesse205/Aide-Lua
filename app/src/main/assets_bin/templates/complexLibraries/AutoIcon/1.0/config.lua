@@ -5,3 +5,4 @@ keys={
 delete={
   "app/src/main/res/drawable/ic_launcher.png",
 }
+support="all"

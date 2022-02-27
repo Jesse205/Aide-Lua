@@ -23,6 +23,6 @@ function MyTextInputLayout.Builder(config)
 end
 
 function MyTextInputLayout.load(config,...)
-  return loadlayout(MyTextInputLayout.Builder(config),...)
+  return loadlayout2(MyTextInputLayout.Builder(config),...)
 end
 return MyTextInputLayout

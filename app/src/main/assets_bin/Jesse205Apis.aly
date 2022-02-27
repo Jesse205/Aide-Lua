@@ -1,5 +1,6 @@
 {
   "newActivity","getSupportActionBar","getSharedData","setSharedData",
+  "activity2luaApi",
   
   --一些标识
   "initApp","notLoadTheme","useCustomAppToolbar",
@@ -11,6 +12,7 @@
   "showLoadingDia","closeLoadingDia","getNowLoadingDia",
   "showErrorDialog","toboolean","rel2AbsPath","copyText",
   "newSubActivity","isDarkColor","openInBrowser","openUrl",
+  "loadlayout2",
 
   "AppPath","ThemeUtil","EditDialogBuilder","ImageDialogBuilder",
   "NetErrorStr","MyToast","AutoToolbarLayout","PermissionUtil",

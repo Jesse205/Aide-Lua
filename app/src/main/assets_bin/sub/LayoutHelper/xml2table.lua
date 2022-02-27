@@ -115,7 +115,7 @@ function show(s)
    else
     activity.setTheme(R.style.Theme_MaterialComponents_Light)
   end
-  dlg.setContentView(loadlayout(loadstring("return "..s)(),{}))
+  dlg.setContentView(loadlayout2(loadstring("return "..s)(),{}))
   activity.setTheme(oldThemeId)
   local dia=dlg.show()
   --print(dia)
@@ -141,7 +141,7 @@ end
 
 function click4()
   layout.main=loadstring("return "..edit.text)()
-  activity.setContentView(loadlayout2(layout.main,{}))
+  activity.setContentView(loadlayout(layout.main,{}))
   dlg2.dismiss()
 end
 
@@ -156,7 +156,7 @@ dlg2_actionBar.setDisplayHomeAsUpEnabled(true)
 
 dlg2.setTitle("编辑代码")
 dlg2.getWindow().setSoftInputMode(0x10)
-dlg2.setContentView(loadlayout(t))
+dlg2.setContentView(loadlayout2(t))
 
 edit.onScrollChange=function(view,l,t,oldl,oldt)
   MyAnimationUtil.ScrollView.onScrollChange(view,l,t,oldl,oldt,dlg2_actionBar)

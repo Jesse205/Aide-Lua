@@ -5,3 +5,4 @@ keys={
             android:value="androidhwext:style/Theme.Emui" />]],},
   defaultImport={"EMUIStyle"},
 }
+support="normal"

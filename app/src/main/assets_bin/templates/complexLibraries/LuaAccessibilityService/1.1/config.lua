@@ -21,3 +21,5 @@ keys={
             </intent-filter>
         </service>]],},
 }
+
+support="all"

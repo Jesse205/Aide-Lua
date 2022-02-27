@@ -19,75 +19,59 @@ import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
 public class Welcome extends AppCompatActivity {
-    private boolean isUpdata;
+
     private LuaApplication app;
     private String luaMdDir;
     private String localDir;
-    private long mLastTime;
-    private long mOldLastTime;
-    private String mVersionName;
-    private String mOldVersionName;
+    //private long mLastTime;
+    //private long mOldLastTime;
 
+    PackageInfo packageInfo;
+    long lastTime;
+    String versionName;
+    SharedPreferences info;
+    String oldVersionName;
+    long oldLastTime;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        app = (LuaApplication) getApplication();
-        luaMdDir = app.getMdDir();
-        localDir = app.getLocalDir();
-        if (checkInfo()) {
-            this.setContentView(R.layout.layout_jesse205_welcome);
-            new UpdateTask().execute();
-        } else {
-            startActivity();
-        }
-    }
-
-    public boolean checkInfo() {
         try {
-            PackageInfo packageInfo = getPackageManager().getPackageInfo(this.getPackageName(), 0);
-            long lastTime = packageInfo.lastUpdateTime;
-            String versionName = packageInfo.versionName;
-            SharedPreferences info = getSharedPreferences("appInfo", 0);
-            String oldVersionName = info.getString("versionName", "");
-            mVersionName = versionName;
-            mOldVersionName = oldVersionName;
-            if (!versionName.equals(oldVersionName)) {
-                SharedPreferences.Editor edit = info.edit();
-                edit.putString("versionName", versionName);
-                edit.apply();
-            }
-            long oldLastTime = info.getLong("lastUpdateTime", 0);
+            packageInfo = getPackageManager().getPackageInfo(this.getPackageName(), 0);
+            lastTime = packageInfo.lastUpdateTime;//更新时间
+            versionName = packageInfo.versionName;//版本名
+            info = getSharedPreferences("appInfo", 0);
+            oldVersionName = info.getString("versionName", "");
+            oldLastTime = info.getLong("lastUpdateTime", 0);
+
+            app = (LuaApplication) getApplication();
+            luaMdDir = app.getMdDir();
+            localDir = app.getLocalDir();
             if (oldLastTime != lastTime) {
-                SharedPreferences.Editor edit = info.edit();
-                edit.putLong("lastUpdateTime", lastTime);
-                edit.apply();
-                isUpdata = true;
-                mLastTime = lastTime;
-                mOldLastTime = oldLastTime;
-                return true;
+                this.setContentView(R.layout.layout_jesse205_welcome);
+                new UpdateTask().execute();
+            } else {
+                startActivity(false);
             }
+
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        return false;
+
     }
 
-    public void startActivity() {
+
+    public void startActivity(Boolean isUpdata) {
         Intent intent = new Intent(Welcome.this, Main.class);
         if (isUpdata) {
             intent.putExtra("isVersionChanged", true);
-            intent.putExtra("newVersionName", mVersionName);
-            intent.putExtra("oldVersionName", mOldVersionName);
+            intent.putExtra("newVersionName", versionName);
+            intent.putExtra("oldVersionName", oldVersionName);
         }
         startActivity(intent);
         //overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out                                                                                                                 );
         finish();
 
     }
-
-
-
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -102,6 +86,14 @@ public class Welcome extends AppCompatActivity {
             try {
                 unApk("assets/", localDir);
                 unApk("lua/", luaMdDir);
+                if (!versionName.equals(oldVersionName)) {
+                    SharedPreferences.Editor edit = info.edit();
+                    edit.putString("versionName", versionName);
+                    edit.apply();
+                }
+                SharedPreferences.Editor edit = info.edit();
+                edit.putLong("lastUpdateTime", lastTime);
+                edit.apply();
             } catch (ZipException e) {
                 e.printStackTrace();
             }
@@ -110,7 +102,8 @@ public class Welcome extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            startActivity();
+
+            startActivity(true);
         }
 
         private void unApk(String dir, String extDir) throws ZipException {
@@ -118,8 +111,8 @@ public class Welcome extends AppCompatActivity {
             String tempDir=getCacheDir().getPath();
             LuaUtil.rmDir(file);
             ZipFile zipFile = new ZipFile(getApplicationInfo().publicSourceDir);
-            zipFile.extractFile(dir,tempDir);
-            new File(tempDir+"/"+dir).renameTo(file);
+            zipFile.extractFile(dir, tempDir);
+            new File(tempDir + "/" + dir).renameTo(file);
         }
 
     }

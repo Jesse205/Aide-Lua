@@ -36,7 +36,7 @@ MySearchLayout.layout={
       id="searchButton";
       minimumWidth="48dp";
       minWidth=0;
-      text=R.string.abc_searchview_description_search;
+      text=R.string.search_menu_title;
     };
   };
 }
@@ -47,11 +47,11 @@ function MySearchLayout.Builder(config)--返回布局表
   if config then
     insertTable(layout,config)
   end
-  --local mainLayout=loadlayout(layout,ids)
+  --local mainLayout=loadlayout2(layout,ids)
   return layout
 end
 
 function MySearchLayout.load(config,...)--返回视图
-  return loadlayout(MySearchLayout.Builder(config),...)
+  return loadlayout2(MySearchLayout.Builder(config),...)
 end
 return MySearchLayout

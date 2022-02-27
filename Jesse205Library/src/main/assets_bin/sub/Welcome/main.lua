@@ -71,7 +71,7 @@ import "pages.agreementPage"
 import "pages.permissionPage"
 
 activity.setTitle(R.string.Jesse205_welcome)
-activity.setContentView(loadlayout("layout"))
+activity.setContentView(loadlayout2("layout"))
 
 toolbar=activity.findViewById(R.id.toolbar)
 activity.setSupportActionBar(toolbar)
@@ -166,7 +166,7 @@ progressBar.setMax((maxPage)*1000)
 adp=ArrayPageAdapter()
 
 for index,content in ipairs(pages) do
-  adp.add(loadlayout(content.layout,content))
+  adp.add(loadlayout2(content.layout,content))
   if content.onInitLayout then
     content:onInitLayout()
   end

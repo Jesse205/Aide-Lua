@@ -11,7 +11,7 @@ import "showPackageMenu"
 
 activity.setTitle(R.string.javaApiViewer_fixImport)
 actionBar.setDisplayHomeAsUpEnabled(true)
-activity.setContentView(loadlayout("layout"))
+activity.setContentView(loadlayout2("layout"))
 
 code,packageName=...
 LoadedData=false

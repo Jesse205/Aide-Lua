@@ -1,5 +1,3 @@
-local AppBarLayout=luajava.bindClass "com.google.android.material.appbar.AppBarLayout"
-local MaterialButton=luajava.bindClass "com.google.android.material.button.MaterialButton"
 local widgets={
   MaterialButton={"TextButton","OutlinedButton","TextButton_Icon"},
 }
@@ -10,10 +8,9 @@ for mainWidget,content in pairs(widgets) do
     local widgetName=mainWidget.."_"..content
     table.insert(types,widgetName)
     local myWidget={
-      _baseClass=_ENV[mainWidget],
+      _baseClass=_G[mainWidget],
       __call=function(self,context)
-        local iInflater=LayoutInflater.from(context)
-        return iInflater.inflate(R.layout["layout_jesse205_"..string.lower(widgetName)],nil)
+        return LayoutInflater.from(context).inflate(R.layout["layout_jesse205_"..string.lower(widgetName)],nil)
       end,
     }
     setmetatable(myWidget,myWidget)

@@ -8,11 +8,11 @@ import com.luajava.LuaTable;
 public class MyLuaAdapter extends LuaAdapter {
 
 
-    public MyLuaAdapter(LuaContext context, LuaTable layout) throws LuaException {
+    public MyLuaAdapter(LuaContext context, LuaTable layout) {
         super(context, layout);
     }
 
-    public MyLuaAdapter(LuaContext context, LuaTable data, LuaTable layout) throws LuaException {
+    public MyLuaAdapter(LuaContext context, LuaTable data, LuaTable layout) {
         super(context, data, layout);
     }
 }

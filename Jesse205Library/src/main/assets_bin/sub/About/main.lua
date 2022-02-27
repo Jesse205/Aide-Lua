@@ -6,15 +6,16 @@ import "com.Jesse205.app.dialog.ImageDialogBuilder"
 import "appAboutInfo"
 import "agreements"
 
-local screenConfigDecoder,actionBar,Landscape,data,PackInfo,adp,layoutManager,Glide,topCardItems,appIconGroup,topCard,recyclerView
+local screenConfigDecoder,actionBar,Landscape,data,PackInfo,adp,layoutManager,Glide,topCardItems,appIconGroup,topCard,recyclerView,appBarElevationCard
 Glide,activity,actionBar=_G.Glide,_G.activity,_G.actionBar
 activity.setTitle(R.string.Jesse205_about)
-activity.setContentView(loadlayout("layout",_ENV))
+activity.setContentView(loadlayout2("layout",_ENV))
 actionBar.setDisplayHomeAsUpEnabled(true)
 
-appIconGroup,topCard,recyclerView=_G.appIconGroup,_G.topCard,_G.recyclerView
+appIconGroup,topCard,recyclerView,appBarElevationCard=_G.appIconGroup,_G.topCard,_G.recyclerView,_G.appBarElevationCard
 PackInfo=activity.PackageManager.getPackageInfo(activity.getPackageName(),64)
 Landscape=false
+LastCard2Elevation=0
 
 function onOptionsItemSelected(item)
   local id=item.getItemId()
@@ -39,9 +40,9 @@ end
 function onItemClick(view,views,key,data)
   if key=="qq" then
     pcall(activity.startActivity,Intent(Intent.ACTION_VIEW,Uri.parse("mqqwpa://im/chat?chat_type=wpa&uin="..data.qq)))
-   elseif key=="qq_group" then
+   elseif key=="qq_group" then--单个QQ群
     joinQQGroup(data.groupId)
-   elseif key=="qq_groups" then
+   elseif key=="qq_groups" then--多个QQ群
     local pop=PopupMenu(activity,view)
     local menu=pop.Menu
     for index,content in ipairs(data.groups) do
@@ -54,15 +55,26 @@ function onItemClick(view,views,key,data)
     newSubActivity("HtmlFileViewer",{{title=data.title,path=data.path}})
    elseif key=="openSourceLicenses" then
     newSubActivity("OpenSourceLicenses")
-   elseif key=="donate" then
-    local donateImage=data.donateImage
-    local donateUrl=data.donateUrl
-    if donateImage then
-      ImageDialogBuilder(activity)
-      :setImage(donateImage)
-      :show()
-     elseif donateUrl then
-      openUrl(data.donateUrl)
+   elseif key=="support" then
+    local supportUrl=data.supportUrl
+    local supportList=data.supportList
+    if supportList then
+      local pop=PopupMenu(activity,view)
+      local menu=pop.Menu
+      for index,content in ipairs(supportList) do
+        menu.add(content.name).onMenuItemClick=function()
+          local url=content.url
+          local func=content.func
+          if func then
+            func(view)
+           elseif url then
+            openUrl(url)
+          end
+        end
+      end
+      pop.show()
+     elseif supportUrl then
+      openUrl(supportUrl)
     end
   end
 end
@@ -72,11 +84,13 @@ function onConfigurationChanged(config)
   if config.orientation==Configuration.ORIENTATION_LANDSCAPE then--横屏时
     LastActionBarElevation=0
     topCard.setElevation(0)
+    appBarElevationCard.setVisibility(View.VISIBLE)
     Landscape=true
     local linearParams=appIconGroup.getLayoutParams()
     linearParams.width=math.dp2int(192)
     appIconGroup.setLayoutParams(linearParams)
    else
+    appBarElevationCard.setVisibility(View.GONE)
     Landscape=false
     local linearParams=appIconGroup.getLayoutParams()
     linearParams.width=-1
@@ -87,8 +101,6 @@ function onConfigurationChanged(config)
     linearParams.height=-2
     linearParams.width=-2
     topCard.setLayoutParams(linearParams)
-    LastActionBarElevation=0
-    topCard.setElevation(0)
   end
 end
 
@@ -96,7 +108,7 @@ topCardItems={}
 --插入大软件图标
 for index,content in ipairs(appInfo) do
   local ids={}
-  appIconGroup.addView(loadlayout("iconItem",ids,LinearLayoutCompat))
+  appIconGroup.addView(loadlayout2("iconItem",ids,LinearLayoutCompat))
   table.insert(topCardItems,ids.mainIconLay)
   local icon,iconView,nameView=content.icon,ids.icon,ids.name
   if type(icon)=="number" then
@@ -213,15 +225,15 @@ if qqGroups then--多个交流群
   })
 end
 
-if donateUrl or donateImage then--支持项目
+if supportUrl or supportList then--支持项目
   table.insert(data,{
     SettingsLayUtil.ITEM_NOSUMMARY;
     title=R.string.Jesse205_donate;
     icon=R.drawable.ic_wallet_giftcard;
-    donateUrl=donateUrl;
-    donateImage=donateImage;
-    key="donate";
-    newPage=donateNewPage;
+    supportUrl=supportUrl;
+    supportList=supportList;
+    key="support";
+    newPage=supportNewPage;
   })
 end
 
@@ -237,12 +249,14 @@ end
 
 adp=SettingsLayUtil.newAdapter(data,onItemClick)
 recyclerView.setAdapter(adp)
-layoutManager=StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.VERTICAL)
+layoutManager=LinearLayoutManager()
 recyclerView.setLayoutManager(layoutManager)
 
 recyclerView.addOnScrollListener(RecyclerView.OnScrollListener{
   onScrolled=function(view,dx,dy)
-    if not(Landscape) and (not(screenConfigDecoder) or screenConfigDecoder.device=="phone") then
+    if Landscape then
+      MyAnimationUtil.RecyclerView.onScroll(view,dx,dy,appBarElevationCard,"LastCard2Elevation")
+     else
       MyAnimationUtil.RecyclerView.onScroll(view,dx,dy,topCard)
     end
   end
@@ -253,8 +267,8 @@ recyclerView.getViewTreeObserver().addOnGlobalLayoutListener({
     if activity.isFinishing() then
       return
     end
-    if not(Landscape) and (not(screenConfigDecoder) or screenConfigDecoder.device=="phone") then
-      MyAnimationUtil.RecyclerView.onScroll(recyclerView,0,0,topCard)
+    if Landscape then
+      topCard.setElevation(0)
     end
   end
 })

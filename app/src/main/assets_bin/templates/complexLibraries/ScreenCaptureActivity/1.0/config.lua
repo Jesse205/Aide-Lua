@@ -4,3 +4,5 @@ keys={
             android:name="com.nirenr.screencapture.ScreenCaptureActivity" 
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />]],},
 }
+
+support="all"

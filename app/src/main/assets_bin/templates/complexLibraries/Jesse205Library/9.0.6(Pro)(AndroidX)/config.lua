@@ -14,3 +14,5 @@ delete={
 format={
   "app/src/main/res/values-zh-rCN/strings.xml",
 }
+
+support="androidx"

@@ -4,7 +4,7 @@ import "android.text.Html"
 import "android.text.method.LinkMovementMethod"
 
 activity.setTitle(R.string.Jesse205_htmlFileViewer)
-activity.setContentView(loadlayout("layout",_ENV))
+activity.setContentView(loadlayout2("layout",_ENV))
 actionBar.setDisplayHomeAsUpEnabled(true)
 data=...
 

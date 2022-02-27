@@ -7,11 +7,12 @@ import "com.Jesse205.app.dialog.EditDialogBuilder"
 import "net.lingala.zip4j.ZipFile"
 
 PackInfo=activity.getPackageManager().getPackageInfo(activity.getPackageName(),64)
+PluginsUtil.setActivityName("settings")
 
 import "settings"
 
 activity.setTitle(R.string.settings)
-activity.setContentView(loadlayout(RecyclerViewLayout))
+activity.setContentView(loadlayout2(RecyclerViewLayout))
 
 actionBar.setDisplayHomeAsUpEnabled(true)
 
@@ -78,7 +79,7 @@ function reloadActivity(closeView)
   local pos,scroll
   if recyclerView then
     closeView.setEnabled(false)
-    pos=layoutManager.findFirstVisibleItemPositions({0})[0]
+    pos=layoutManager.findFirstVisibleItemPosition()
     scroll=recyclerView.getChildAt(0).getTop()
   end
   newActivity("main",aRanim.fade_in,aRanim.fade_out,{{pos,scroll}})
@@ -110,7 +111,7 @@ end
 
 adp=SettingsLayUtil.newAdapter(settings,onItemClick)
 recyclerView.setAdapter(adp)
-layoutManager=StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.VERTICAL)
+layoutManager=LinearLayoutManager()
 recyclerView.setLayoutManager(layoutManager)
 recyclerView.addOnScrollListener(RecyclerView.OnScrollListener{
   onScrolled=function(view,dx,dy)

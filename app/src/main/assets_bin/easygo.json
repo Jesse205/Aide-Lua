@@ -23,7 +23,8 @@
                 "Activities": [],
                 "UX": {
                     "supportLock": "true",
-                    "isDraggable": "true"
+                    "isDraggable": "true",
+                    "supportDraggingToFullScreen": "ALL"
                 }
             }
         }

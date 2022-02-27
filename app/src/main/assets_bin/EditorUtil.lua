@@ -60,7 +60,7 @@ EditorUtil.PreviewFunc={
      else
       activity.setTheme(R.style.Theme_MaterialComponents_Light)
     end
-    local layout=loadlayout2(assert(loadfile(NowFile.getPath()))(),{},nil,NowProjectDirectory.getPath())
+    local layout=loadpreviewlayout(assert(loadfile(NowFile.getPath()))(),{},nil,NowProjectDirectory.getPath())
     --NowEditor.removeAllViews()
     NowEditor.addView(layout)
     return true
@@ -113,7 +113,7 @@ EditorUtil.PreviewFunc={
        else
         activity.setTheme(R.style.Theme_MaterialComponents_Light)
       end
-      local layout=loadlayout2(assert(loadstring(layout))(),{},nil,NowProjectDirectory.getPath())
+      local layout=loadpreviewlayout(assert(loadstring(layout))(),{},nil,NowProjectDirectory.getPath())
       --NowEditor.removeAllViews()
       NowEditor.addView(layout)
 

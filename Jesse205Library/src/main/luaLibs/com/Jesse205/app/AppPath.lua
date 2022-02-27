@@ -33,8 +33,12 @@ getSelfPublicPath=nil
 
 AppPath.LuaDir=context.getLuaDir()
 --AppPath.LuaExtDir=extDir
-AppPath.AppShareDir=mediaDirPath
+AppPath.AppShareDir=mediaDirPath.."/files"
 AppPath.AppDataDir=dataDirPath1.."/files"
 AppPath.AppSdcardDataDir=dataDirPath2.."/files"
+
+AppPath.AppShareCacheDir=mediaDirPath.."/cache"
+AppPath.AppDataCacheDir=dataDirPath1.."/cache"
+AppPath.AppSdcardCacheDataDir=dataDirPath2.."/cache"
 
 return AppPath

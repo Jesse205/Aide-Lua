@@ -6,9 +6,11 @@ Jesse205._ENV=_ENV
 Jesse205.themeType="Jesse205"--主题类型
 
 require "import"--导入import
-local context=context or activity or service--当前context
+import "loadlayout2"
+local context=activity or service--当前context
 Jesse205.context=context
-resources=context.getResources()--当前resources
+local resources=context.getResources()--当前resources
+_G.resources=resources
 
 if activity then
   window=activity.getWindow()
@@ -25,18 +27,21 @@ notSafeModeEnable=not(safeModeEnable)
 local activity2luaApi={
   "newActivity","getSupportActionBar",
   "getSharedData","setSharedData",
+  "getString"
 }
 for index,content in ipairs(activity2luaApi) do
   _G[content]=function(...)
     return context[content](...)
   end
 end
+activity2luaApi=nil
 
---[[
-function isDarkColor(color)
-  --local color=Integer.toHexString(color)
-  return (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) <192
-end]]
+import "android.os.Environment"
+
+import "com.Jesse205.app.PermissionUtil"
+import "com.Jesse205.lua.math"--导入更强大的math
+import "com.Jesse205.lua.string"--导入更强大的string
+import "com.Jesse205.app.AppPath"--导入路径
 
 if initApp then--初始化APP
   import "com.Jesse205.app.initApp"
@@ -68,6 +73,43 @@ if not(notLoadTheme) then
   local light=color.Light
   local dark=color.Dark
   local number=theme.number
+
+  setmetatable(color,{--普通颜色
+    __index=function(self,key)
+      local value=resources.getColor(R.color["Jesse205_"..key])
+      self[key]=value
+      return value
+    end
+  })
+  setmetatable(ripple,{--波纹颜色
+    __index=function(self,key)
+      local value=resources.getColor(R.color["Jesse205_"..key.."_Ripple"])
+      self[key]=value
+      return value
+    end
+  })
+  setmetatable(light,{--偏亮颜色
+    __index=function(self,key)
+      local value=resources.getColor(R.color["Jesse205_"..key.."_Light"])
+      self[key]=value
+      return value
+    end
+  })
+  setmetatable(dark,{--偏暗颜色
+    __index=function(self,key)
+      local value=resources.getColor(R.color["Jesse205_"..key.."_Dark"])
+      self[key]=value
+      return value
+    end
+  })
+  setmetatable(number,{--数字
+    __index=function(self,key)
+      local value=resources.getDimension(R.dimen["Jesse205_"..key])
+      self[key]=value
+      return value
+    end
+  })
+  --[[
   local colors={"White","Red","Orange","Black",
     "Blue","Green","Pink","Grey"}--Jesse205Library内置的所有颜色
   for index,content in ipairs(colors) do
@@ -85,7 +127,7 @@ if not(notLoadTheme) then
   dimens={"padWidth","pcWidth"}
   for index,content in ipairs(dimens) do
     number[content]=resources.getDimension(R.dimen["Jesse205_"..content])
-  end
+  end]]
   import "com.Jesse205.app.ThemeUtil"
   ThemeUtil.refreshUI()
 end
@@ -117,6 +159,7 @@ import "androidx.cardview.widget.CardView"
 
 import "androidx.recyclerview.widget.RecyclerView"
 import "androidx.recyclerview.widget.StaggeredGridLayoutManager"
+import "androidx.recyclerview.widget.LinearLayoutManager"
 
 import "android.animation.LayoutTransition"
 
@@ -129,6 +172,7 @@ import "android.content.pm.PackageManager"
 
 --导入常用的Material类
 --import "com.google.android.material.tabs.TabLayout"
+import "com.google.android.material.appbar.AppBarLayout"
 import "com.google.android.material.card.MaterialCardView"--卡片
 import "com.google.android.material.button.MaterialButton"--按钮
 import "com.google.android.material.snackbar.Snackbar"
@@ -149,11 +193,6 @@ import "com.lua.custrecycleradapter.LuaCustRecyclerHolder"
 
 import "com.androlua.LuaUtil"
 
-import "com.Jesse205.app.PermissionUtil"
-import "com.Jesse205.lua.math"--导入更强大的math
-import "com.Jesse205.lua.string"--导入更强大的string
-
-import "com.Jesse205.app.AppPath"--导入路径
 import "com.Jesse205.util.MyStyleUtil"
 import "com.Jesse205.util.MyToast"--导入MyToast
 --import "com.Jesse205.util.NetErrorStr"--导入网络错误代码

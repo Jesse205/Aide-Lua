@@ -1,11 +1,11 @@
 require "import"
 import "Jesse205"
-import "loadlayout2"
+import "loadpreviewlayout"
 import "viewList"
 import "defaultLayout"
 
 activity.setTitle(R.string.app_name)
-activity.setContentView(loadlayout("layout"))
+activity.setContentView(loadlayout2("layout"))
 actionBar.setDisplayHomeAsUpEnabled(true)
 
 projectPath,layoutContent=...--传入的文件路径
@@ -32,7 +32,7 @@ end
 
 function refreshLayout()
   presentationView.removeAllViews()
-  local view=loadlayout2(loadstring(layoutContent)())
+  local view=loadpreviewlayout(loadstring(layoutContent)())
   presentationView.addView(view)
 end
 

@@ -14,7 +14,6 @@
     <string name="code_popup">代码...</string>
     <string name="check_import">分析导入</string>
     <string name="tools_popup">工具...</string>
-    <string name="settings">设置</string>
     <string name="reminder">温馨提示</string>
     <string name="unknown">(未知)</string>
     <string name="unknowError">未知错误</string>
@@ -53,6 +52,7 @@
     <string name="drawer_close">关闭侧滑</string>
 
     <string name="file">文件</string>
+    <string name="file_up">返回上一级目录</string>
     <string name="file_popup">文件...</string>
     <string name="file_cannot_open_compiled_file">不能打开已编译文件。</string>   
     <string name="file_not_find">未找到文件</string>
@@ -134,6 +134,7 @@
     <string name="checkCode">检查错误</string>
     <string name="checkCode_noGrammaticalErrors">没有语法错误。</string>
     
+    <string name="settings">设置</string>
     <string name="settings_ui_richAnim">丰富的动画</string>
     <string name="settings_editor_highlight_Jesse205Library">Jesse205Library 代码提示</string>
     <string name="settings_editor_highlight_Jesse205Library_summary">提示 Jesse205 Library 高级用法</string>
@@ -146,6 +147,7 @@
     <string name="settings_needRestart">修改后重启生效</string>
     <string name="settings_addComplexLibrary">添加复杂库</string>
     <string name="settings_addComplexLibrary_summary">可以在“新建项目”等功能使用专属您的复杂库</string>
+    <string name="settings_editor_previewButton">预览按钮</string>
     
     <string name="window_openNew">打开新窗口</string>
     <string name="window_openInNewWindow">在新窗口打开</string>
@@ -158,5 +160,8 @@
     <string name="runCode_noApp">为了您更好地调试软件，请先打包并安装项目，并开放LuaActivity。</string>
     <string name="runCode_noPackageName">为了您更好地调试软件，请检查config.lua的packageName是否存在。</string>
     
+    <string name="plugins">插件</string>
+    <string name="plugins_popup">插件...</string>
+    <string name="plugins_manager">插件管理</string>
     
 </resources>

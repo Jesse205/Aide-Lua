@@ -15,7 +15,7 @@ if searchWord=="nil" then
 end
 activity.setTitle(R.string.javaApiViewer)
 actionBar.setDisplayHomeAsUpEnabled(true)
-activity.setContentView(loadlayout("layout"))
+activity.setContentView(loadlayout2("layout"))
 
 function onCreate()
   local trueWord=""

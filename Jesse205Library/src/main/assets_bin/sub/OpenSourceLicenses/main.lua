@@ -5,7 +5,7 @@ import "openSourceLicenses"
 import "item"
 
 activity.setTitle(R.string.Jesse205_openSourceLicense)
-activity.setContentView(loadlayout("layout",_ENV))
+activity.setContentView(loadlayout2("layout",_ENV))
 actionBar.setDisplayHomeAsUpEnabled(true)
 
 function onOptionsItemSelected(item)
@@ -28,7 +28,7 @@ adp=LuaCustRecyclerAdapter(AdapterCreator({
   end,
   onCreateViewHolder=function(parent,viewType)
     local ids={}
-    local view=loadlayout(item,ids)
+    local view=loadlayout2(item,ids)
     local holder=LuaCustRecyclerHolder(view)
     view.setTag(ids)
     ids.cardViewChild.setBackground(ThemeUtil.getRippleDrawable(theme.color.rippleColorPrimary))

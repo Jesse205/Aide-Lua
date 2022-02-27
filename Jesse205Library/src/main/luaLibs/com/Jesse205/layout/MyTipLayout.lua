@@ -39,6 +39,6 @@ function MyTipLayout.Builder(config)--返回布局表
 end
 
 function MyTipLayout.load(config,...)--返回视图
-  return loadlayout(MyTextInputLayout.Builder(config),...)
+  return loadlayout2(MyTextInputLayout.Builder(config),...)
 end
 return MyTipLayout

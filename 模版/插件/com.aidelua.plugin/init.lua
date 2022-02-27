@@ -1,0 +1,13 @@
+appname="我的插件"--插件名
+packagename="com.aidelua.plugin"--插件包名
+appver="1.0"
+appcode=1
+mineditorcode=41499--最低编辑器版本号
+targeteditorcode=41499--目标编辑器版本号
+mode="plugin"--模式：插件
+events={--事件
+  onCreate=function(savedInstanceState)
+  print("插件加载成功")
+  end,
+}
+thirdplugins={}

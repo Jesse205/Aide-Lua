@@ -8,18 +8,21 @@ editorFunc={
       return success,message
     end
   end,
-  open=function()
+  open=function(openDrawer)
+    local closeDrawer=not(openDrawer)
     if screenConfigDecoder.device=="phone" then
-      if drawerOpened then
+      if (openDrawer~=nil and closeDrawer and drawerOpened) or (openDrawer==nil and drawerOpened) then
         drawer.closeDrawer(Gravity.LEFT)
-       else
+        drawerOpened=false
+       elseif not(drawerOpened) then
         drawer.openDrawer(Gravity.LEFT)
+        drawerOpened=true
       end
      else
-      if drawerOpened then
+      if (openDrawer~=nil and closeDrawer and drawerOpened) or (openDrawer==nil and drawerOpened) then
         drawerChild.setVisibility(View.GONE)
         drawerOpened=false
-       else
+       elseif not(drawerOpened) then
         drawerChild.setVisibility(View.VISIBLE)
         drawerOpened=true
       end
@@ -364,7 +367,7 @@ function refresh(file,upFile,force)
       if upFile then--如果是向上
         FilesListScroll[nowDirectoryPath]=nil--将当前已打开文件夹滚动设为0
        else
-        local pos=layoutManager.findFirstVisibleItemPositions({0})[0]
+        local pos=layoutManager.findFirstVisibleItemPosition()
         local listViewFirstChild=recyclerView.getChildAt(0)--获取列表第一个控件
         local scroll=0
         if listViewFirstChild then--有控件
@@ -483,7 +486,7 @@ end
 
 --初始化符号栏按钮
 function newPsButton(text)
-  return loadlayout({
+  return loadlayout2({
     AppCompatTextView;
     onClick=psButtonClick;
     text=text;
@@ -536,6 +539,7 @@ function refreshMenusState()
     for index,content in ipairs(StateByEditorMenus) do
       content.setEnabled(IsEdtor)
     end
+    PluginsUtil.callElevents("refreshMenusState")
   end
 end
 
@@ -734,12 +738,13 @@ function openFile(file,reOpen,line)
       if not(loadingFiles) then
         adp.notifyDataSetChanged()
       end]]
-      if ProjectUtil.SupportPreviewType[fileType] then
-        previewChipCardView.setVisibility(View.VISIBLE)
-       else
-        previewChipCardView.setVisibility(View.GONE)
+      if oldEditorPreviewButton then
+        if ProjectUtil.SupportPreviewType[fileType] then
+          previewChipCardView.setVisibility(View.VISIBLE)
+         else
+          previewChipCardView.setVisibility(View.GONE)
+        end
       end
-
 
       if not(loadingFiles) and not(reOpen) then
         if NowFilePosition then
@@ -1157,7 +1162,7 @@ function updateSharedActivity(name,sdActivityDir)
 end
 
 function checkUpdateSharedActivity(name)
-  local sdActivityPath=AppPath.AppShareDir.."/activities/"..name
+  local sdActivityPath=AppPath.AppShareCacheDir.."/activities/"..name
   local sdActivityDir=File(sdActivityPath)
   local exists=sdActivityDir.exists()
   if exists then
@@ -1167,7 +1172,7 @@ function checkUpdateSharedActivity(name)
 end
 
 function checkSharedActivity(name,update)
-  local sdActivityPath=AppPath.AppShareDir.."/activities/"..name
+  local sdActivityPath=AppPath.AppShareCacheDir.."/activities/"..name
   local sdActivityMainPath=sdActivityPath.."/main.lua"
   local sdActivityDir=File(sdActivityPath)
   local sdActivityMainFile=File(sdActivityMainPath)
