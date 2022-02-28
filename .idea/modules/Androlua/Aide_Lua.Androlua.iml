@@ -27,17 +27,17 @@
     </facet>
   </component>
   <component name="NewModuleRootManager">
-    <output url="file://$MODULE_DIR$/../../../Androlua/build/intermediates/javac/debug/classes" />
-    <output-test url="file://$MODULE_DIR$/../../../Androlua/build/intermediates/javac/debugUnitTest/classes" />
+    <output url="file://$MODULE_DIR$/../../../androlua/build/intermediates/javac/debug/classes" />
+    <output-test url="file://$MODULE_DIR$/../../../androlua/build/intermediates/javac/debugUnitTest/classes" />
     <exclude-output />
-    <content url="file://$MODULE_DIR$/../../../Androlua">
-      <sourceFolder url="file://$MODULE_DIR$/../../../Androlua/src/main/res" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/../../../Androlua/build/generated/ap_generated_sources/debug/out" isTestSource="false" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/../../../Androlua/build/generated/source/buildConfig/debug" isTestSource="false" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/../../../Androlua/src/main/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../../../Androlua/build/generated/res/resValues/debug" type="java-resource" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../Androlua/.gradle" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../Androlua/build" />
+    <content url="file://$MODULE_DIR$/../../../androlua">
+      <sourceFolder url="file://$MODULE_DIR$/../../../androlua/build/generated/ap_generated_sources/debug/out" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../androlua/build/generated/res/resValues/debug" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../androlua/build/generated/source/buildConfig/debug" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../androlua/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../androlua/src/main/res" type="java-resource" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../androlua/build" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../androlua/.gradle" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
