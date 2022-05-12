@@ -228,7 +228,7 @@ end
 if supportUrl or supportList then--支持项目
   table.insert(data,{
     SettingsLayUtil.ITEM_NOSUMMARY;
-    title=R.string.Jesse205_donate;
+    title=R.string.Jesse205_supportProject;
     icon=R.drawable.ic_wallet_giftcard;
     supportUrl=supportUrl;
     supportList=supportList;

@@ -163,5 +163,8 @@
     <string name="plugins">插件</string>
     <string name="plugins_popup">插件...</string>
     <string name="plugins_manager">插件管理</string>
+    <string name="plugins_install">安装插件</string>
+    <string name="plugins_installed">已安装插件</string>
+    <string name="plugins_download">下载插件</string>
     
 </resources>

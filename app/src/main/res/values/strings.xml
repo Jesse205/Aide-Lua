@@ -166,5 +166,8 @@
     <string name="plugins">Plugins</string>
     <string name="plugins_popup">Plugins...</string>
     <string name="plugins_manager">Plugins Manager</string>
+    <string name="plugins_install">Install plugins</string>
+    <string name="plugins_installed">Installed plugins</string>
+    <string name="plugins_download">Download plugins</string>
     
 </resources>
