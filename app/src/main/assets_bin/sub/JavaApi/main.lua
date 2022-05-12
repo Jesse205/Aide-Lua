@@ -17,6 +17,8 @@ activity.setTitle(R.string.javaApiViewer)
 actionBar.setDisplayHomeAsUpEnabled(true)
 activity.setContentView(loadlayout2("layout"))
 
+searching=false
+
 function onCreate()
   local trueWord=""
   if searchWord then
@@ -102,22 +104,34 @@ end
 
 
 function searchItem(text,callback)
-  if checkTextError(text,searchLay) then
-    return
-  end
-  progressBar.setVisibility(View.VISIBLE)
-  searchButton.clickable=false
-  activity.newTask(search,function(classesList)
-    local classesList=luajava.astable(classesList)
-    adp.clear()
-    adp.addAll(classesList)
-    adp.notifyDataSetChanged()
-    progressBar.setVisibility(View.GONE)
-    searchButton.clickable=true
-    if callback then
-      callback(classesList)
+  if not(searching) then
+    if checkTextError(text,searchLay) then
+      return
     end
-  end).execute({tostring(text),application})
+    searchButton.clickable=false
+    
+    --延迟展示进度条
+    Handler().postDelayed(Runnable({
+      run=function()
+        if searching then
+          progressBar.setVisibility(View.VISIBLE)
+        end
+      end
+    }),100)
+
+    activity.newTask(search,function(classesList)
+      searching=false
+      local classesList=luajava.astable(classesList)
+      adp.clear()
+      adp.addAll(classesList)
+      adp.notifyDataSetChanged()
+      progressBar.setVisibility(View.GONE)
+      searchButton.clickable=true
+      if callback then
+        callback(classesList)
+      end
+    end).execute({tostring(text),application})
+  end
 end
 
 function checkTextError(text,searchLay)
