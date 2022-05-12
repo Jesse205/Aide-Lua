@@ -9,6 +9,7 @@ function buildProject(ProjectPath,MainConfig,BuildTool,install)
   notLoadTheme=true
   import "Jesse205"
   import "android.content.pm.PackageManager"
+  import "net.lingala.zip4j.ZipFile"
   import "apksigner.*"
   import "ReBuildTool"
   this.update(activity.getString(R.string.binpoject_creating_variables))
@@ -23,21 +24,24 @@ function buildProject(ProjectPath,MainConfig,BuildTool,install)
   local BuildPath=MainAppPath.."/build"
   local BinPath=BuildPath.."/bin"
   local BinFile=File(BinPath)
-  local TempPath=BinPath.."/AideLua_unzip"
+  local TempPath=BinPath.."/aidelua_unzip"
   local TempFile=File(TempPath)
   local AssetsPath=TempPath.."/assets"
   local AssetsFile=File(AssetsPath)
   local LibraryPath=TempPath.."/lua"
   local LibraryFile=File(LibraryPath)
   local AppPathList={
+    MainConfig.appApkPath,
+    --Gradle打包
+    BuildPath.."/outputs/apk/release/app-release-unsigned.apk",--正式版
+    BuildPath.."/outputs/apk/debug/app-debug.apk",
+    --AIDE高级设置版打包
     BinPath.."/app.apk",
     BinPath.."/app-debug.apk",
     BinPath.."/app-release.apk",
     BinPath.."/generated.apk",
     BinPath.."/signed.apk",
-    BuildPath.."/outputs/apk/debug/app.apk",
-    BuildPath.."/outputs/apk/debug/app-release.apk",
-    BuildPath.."/outputs/apk/debug/app-debug.apk",
+    --普通AIDE打包
     AppPath.Sdcard.."/Android/data/com.aide.ui/cache/apk/app.apk",
   }
   local AppPath
@@ -47,12 +51,14 @@ function buildProject(ProjectPath,MainConfig,BuildTool,install)
   local SignedApkPath=BinPath.."/app_aidelua_sign.apk"--已签名apk路径
   local signSucceed,signErr
 
-  for index,content in ipairs(AppPathList) do
-    local file=File(content)
-    if file.isFile() then
-      AppPath=content
-      AppFile=file
-      break
+  for index,content in pairs(AppPathList) do
+    if content then
+      local file=File(content)
+      if file.isFile() then
+        AppPath=content
+        AppFile=file
+        break
+      end
     end
   end
   if not(AppPath) then

@@ -1,0 +1,3 @@
+local FilesBrowserManager={}
+
+return FilesBrowserManager

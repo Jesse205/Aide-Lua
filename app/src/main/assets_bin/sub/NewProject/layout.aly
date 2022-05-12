@@ -55,7 +55,7 @@
       gravity="center|right";
       {
         MaterialButton_TextButton;
-        text=android.R.string.no;
+        text=android.R.string.cancel;
         layout_marginLeft="16dp";
         minimumWidth="56dp";
         minWidth=0;

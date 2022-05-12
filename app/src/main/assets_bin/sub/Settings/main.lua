@@ -21,6 +21,10 @@ scroll=...
 
 REQUEST_ADDCLIB=10
 
+function onCreate(savedInstanceState)
+  PluginsUtil.callElevents("onCreate",savedInstanceState)
+end
+
 function onOptionsItemSelected(item)
   local id=item.getItemId()
   if id==android.R.id.home then
@@ -95,17 +99,30 @@ function onItemClick(view,views,key,data)
     adp.notifyItemChanged(2)]]
    elseif key=="about" then
     newSubActivity("About")
-   elseif key=="theme_darkactionbar" and ThemeUtil.NowAppTheme.night~=true then
+   elseif key=="theme_darkactionbar" then
     reloadActivity(view)
    elseif key=="addComplexLibrary" then
     local intent=Intent(Intent.ACTION_GET_CONTENT)
     intent.setType("application/zip")
     intent.addCategory(Intent.CATEGORY_OPENABLE)
     activity.startActivityForResult(intent, REQUEST_ADDCLIB)
+   elseif key=="plugins_manager" then
+    newSubActivity("PluginsManager")
    else
     if data.action=="editString" then
       EditDialogBuilder.settingDialog(adp,views,key,data)
     end
+  end
+  PluginsUtil.callElevents("onItemClick",views,key,data)
+end
+for index,content in ipairs(settings) do
+  if content.title==R.string.plugins then
+    local items={}
+    PluginsUtil.callElevents("onLoadItemsList",items)
+    for index2,content in ipairs(items) do
+      table.insert(settings,index+index2,content)
+    end
+    break
   end
 end
 

@@ -64,10 +64,6 @@
         <item name="itemTextColor">@color/jesse205_navigation_item_text_color</item>
     </style>
 
-    <!--<style name="Widget.Jesse205.Red.ActionBar" parent="Widget.AppCompat.ActionBar">
-    <item name="background">@drawable/actionbar_background_red</item>
-    </style>
-    -->   
     <!--基础主题-->
     <style name="Base.Theme.Jesse205" parent="Theme.MaterialComponents.Light">
         <item name="colorPrimary">@color/Jesse205_White</item>
@@ -88,6 +84,8 @@
         <item name="rippleColorPrimary">@color/Jesse205_Black_Ripple</item>
 
         <item name="actionBarTheme">@style/ThemeOverlay.Jesse205.ActionBar</item>
+        <item name="actionBarWidgetTheme">@null</item>
+        <item name="actionBarPopupTheme">@style/ThemeOverlay.MaterialComponents.Light</item>
         <item name="actionModeBackground">?colorPrimary</item>
         <item name="floatingActionButtonBackgroundColor">?colorBackgroundFloating</item>
         <item name="floatingActionButtonStyle">@style/Widget.Jesse205.FloatingActionButton</item>
@@ -140,6 +138,8 @@
         <item name="rippleColorPrimary">@color/Jesse205_White_Ripple</item>
 
         <item name="actionBarTheme">@style/ThemeOverlay.Jesse205.Dark.ActionBar</item>
+        <item name="actionBarWidgetTheme">@null</item>
+        <item name="actionBarPopupTheme">@style/ThemeOverlay.MaterialComponents</item>
         <item name="actionModeBackground">?colorPrimary</item>
         <item name="floatingActionButtonBackgroundColor">?colorBackgroundFloating</item>
         <item name="floatingActionButtonStyle">@style/Widget.Jesse205.FloatingActionButton.Dark</item>
@@ -202,8 +202,6 @@
         <item name="navigationViewColorAccent">?colorPrimary</item>
         <item name="android:navigationBarColor">?colorPrimaryDark</item>
         <item name="actionBarTheme">@style/ThemeOverlay.Jesse205.Dark.ActionBar</item>
-        <item name="actionBarWidgetTheme">@null</item>
-        <item name="actionBarPopupTheme">@style/ThemeOverlay.MaterialComponents.Light</item>
         <item name="tabStyle">@style/Widget.Jesse205.TabLayout.Colored</item>
         <item name="colorPrimary">?colorAccent</item>
         <item name="windowLightStatusBar">false</item>
@@ -255,9 +253,6 @@
         <item name="rippleColorAccent">@color/Jesse205_Pink_Ripple</item>
     </style>
 
-    <style name="Theme.Jesse205.Dark" parent="Base.Theme.Jesse205.Dark"/>
-    <style name="Theme.Jesse205.Dark.DarkActionBar" parent="Theme.Jesse205.Dark"/>
-    <style name="Theme.Jesse205.DayNight" parent="Theme.Jesse205" />
     
     <!--无工具栏主题-->
     <style name="Theme.Jesse205.Default.NoActionBar" parent="Theme.Jesse205.Default">
@@ -315,15 +310,5 @@
         <item name="windowNoTitle">true</item>
     </style>
     
-    <style name="Theme.Jesse205.Dark.NoActionBar" parent="Theme.Jesse205.Dark">
-        <item name="windowActionModeOverlay">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-    <style name="Theme.Jesse205.Dark.DarkActionBar.NoActionBar" parent="Theme.Jesse205.Dark.DarkActionBar">
-        <item name="windowActionModeOverlay">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
 </resources>
 

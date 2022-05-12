@@ -1,0 +1,6 @@
+{
+  onCreate=function(savedInstanceState)
+    print("进入主页面")
+    print(appname,"加载成功")
+  end,
+}

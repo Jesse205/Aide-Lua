@@ -1,0 +1,22 @@
+{
+  {--插件管理
+    SettingsLayUtil.TITLE;
+    title=R.string.plugins_manager;
+  };
+  {
+    SettingsLayUtil.ITEM_NOSUMMARY;
+    icon=R.drawable.ic_puzzle_plus_outline;
+    title=R.string.plugins_install;
+    key="install_plugin";
+  };
+  {
+    SettingsLayUtil.ITEM_NOSUMMARY;
+    icon=R.drawable.ic_cloud_download_outline;
+    title=R.string.plugins_download;
+    key="download_plugin";
+  };
+  {--已安装的插件
+    SettingsLayUtil.TITLE;
+    title=R.string.plugins_installed;
+  };
+}

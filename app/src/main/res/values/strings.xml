@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Aide Lua</string>
+    <string name="app_name">Aide Lua Pro</string>
     <string name="windmill">Windmill</string>
     <string name="undo">Undo</string>
     <string name="redo">Redo</string>
@@ -90,7 +90,7 @@
     <string name="project_create_failed">Creation failed</string>
     <string name="project_app_name">App name</string>
     <string name="project_package_name">Package name</string>
-    <string name="project_appTitle">%1$s_AideLua</string>
+    <string name="project_appTitle">%1$s_AideLuaPro</string>
     <string name="project_appSubtitle_360dp">Prj: %1$s</string>
     <string name="project_appSubtitle_380dp">Prj: %1$s</string>
     <string name="project_appSubtitle_390dp">Project: %1$s</string>

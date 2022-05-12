@@ -291,7 +291,7 @@ local function setAlpha(views,alpha)
 end
 SettingsLayUtil.setAlpha=setAlpha
 
-function SettingsLayUtil.newAdapter(data,onItemClick)
+function SettingsLayUtil.newAdapter(data,onItemClick,onItemLongClick)
   return LuaCustRecyclerAdapter(AdapterCreator({
     getItemCount=function()
       return #data
@@ -321,6 +321,13 @@ function SettingsLayUtil.newAdapter(data,onItemClick)
                 setSharedData(data.key,checked)
               end
             end
+          end
+        end
+        if onItemLongClick then
+          view.onLongClick=function(view)
+            local data=ids._data
+            local key=data.key
+            onItemLongClick(view,ids,key,data)
           end
         end
       end

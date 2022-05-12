@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Jesse205.Welcome" parent="Theme.Jesse205.DayNight" >
+    <style name="Theme.Jesse205.Welcome" parent="Theme.Jesse205.Default" >
         <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowBackground">@drawable/welcome</item>
         <item name="android:windowDisablePreview">false</item>

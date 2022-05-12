@@ -49,7 +49,7 @@ local function createFileInfoDialog(config,nowDir)--文件名填写对话框
       return true
     end
   end,true,true)
-  :setNegativeButton(android.R.string.no,nil)
+  :setNegativeButton(android.R.string.cancel,nil)
   builder:show()
 end
 
@@ -72,7 +72,7 @@ local function createFileDialog(nowDir)--模版选择对话框
       createFileInfoDialog(template,nowDir)
     end
   end)
-  .setNegativeButton(android.R.string.no,nil)
+  .setNegativeButton(android.R.string.cancel,nil)
   .show()
 end
 

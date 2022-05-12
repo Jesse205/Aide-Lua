@@ -1,7 +1,7 @@
 tool={
   version="1.1",
 }
-appName="Aide Lua"--应用名称
+appName="Aide Lua Pro"--应用名称
 packageName="com.Jesse205.aidelua2"--应用包名
 debugActivity="com.Jesse205.superlua.LuaActivity"
 

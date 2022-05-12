@@ -1,3 +1,6 @@
+import "java.io.File"
+import "java.io.FileInputStream"
+import "java.io.FileOutputStream"
 local FileUtil={}
 local function copyFile(fromFile,toFile,rewrite)
   local toFileParent=toFile.getParentFile()

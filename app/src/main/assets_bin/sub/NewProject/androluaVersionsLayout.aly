@@ -15,7 +15,7 @@
     layout_marginRight="16dp";
     {
       AppCompatTextView;
-      text="AndroLua 版本";
+      text="*AndroLua 版本";
       textSize="14sp";
       typeface=Typeface.defaultFromStyle(Typeface.BOLD);
       textColor=theme.color.colorAccent;

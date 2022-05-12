@@ -22,7 +22,7 @@ function newLayoutTransition()
   end
 end
 
-
+apptype="aidelua"
 
 import "PluginsUtil"
 

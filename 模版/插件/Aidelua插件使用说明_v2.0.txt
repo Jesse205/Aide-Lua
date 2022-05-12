@@ -1,0 +1,48 @@
+AideLua暂时不支持一键安装插件，所以我们提供临时解决方法
+1.打开文件管理，进入 内部存储/Android/media/com.Jesse205.aidelua2/files
+2.新建文件夹，重命名为 plugins
+3.下载插件（通常为zip或alp）
+4.使用zip格式打开插件，打开init.lua文件，复制 packagename（包名） 的参数（“=”后面，不带引号）
+5.在刚刚新建的 plugins 文件夹里面再新建文件夹，重命名为刚才复制的字符串（包名）
+6.解压插件内所有的文件夹，到文件名为刚刚复制 packagename 参数的文件夹
+7.重启AideLua
+
+
+注意事项：
+  1.目标版本和最低版本请按实际情况填写
+
+代码调用说明：
+  PluginsUtil：
+    PluginsUtil.getPluginDataDir(packageName)：获取插件数据目录
+    PluginsUtil.getPluginDir(packageName)：获取插件目录，如果文件夹名与真正的packageName请手动输入文件夹名
+  activityName:
+    main：主页面
+    settings：设置页面
+
+
+文件说明：
+  init.lua：用于存放模块信息的文件
+    变量说明：
+      appname(string)：插件名
+      packagename(string)：插件包名
+      appver(string)：插件版本名
+      appcode(number)：插件版本号
+      minemastercode(number)：最低支持的编辑器版本号
+      targemastercode(number)：目标适配的编辑器版本号
+      mode(string)：模式，默认"plugin"
+      thirdplugins(table)：需要安装的第三方库
+      supported(table)：支持的编辑器
+  config/events/：存放各个页面的事件的文件夹
+    main.aly：主页面事件存放文件
+      函数说明：
+        onCreate(savedInstanceState)：程序启动
+        onCreateOptionsMenu(menu)：载入菜单
+        onOptionsItemSelected(item)：菜单被点击
+        onKeyShortcut(keyCode,event)：按键被按
+        onConfigurationChanged(config)：配置文件发生改变，常见于屏幕旋转
+        refreshMenusState()：刷新菜单状态
+    settings.aly：设置页面事件存放文件
+      函数说明：
+        onLoadItemsList(item)：加载列表
+        onItemClick(views,key,data)：点击项目
+  

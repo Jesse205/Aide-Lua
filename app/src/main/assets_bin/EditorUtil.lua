@@ -186,6 +186,7 @@ function EditorUtil.switchEditor(editorType,language)
       content.setVisibility(View.GONE)
     end
   end
+  refreshSymbolBar(oldEditorSymbolBar)
   return EditorUtil
 end
 

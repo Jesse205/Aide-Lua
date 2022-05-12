@@ -79,6 +79,8 @@ import "sub.LayoutHelper2.loadpreviewlayout"
 import "adapter.FileListAdapter"
 
 PluginsUtil.setActivityName("main")
+PluginsUtil.loadPlugins()
+plugins=PluginsUtil.getPlugins()
 
 --申请存储权限
 PermissionUtil.smartRequestPermission({"android.permission.WRITE_EXTERNAL_STORAGE","android.permission.READ_EXTERNAL_STORAGE"})
@@ -250,8 +252,9 @@ function onCreate(savedInstanceState)
     closeProject()
     refresh()
     editorFunc.open(true)
+    toggle.syncState()
   end
-  return PluginsUtil.callElevents("onCreate",savedInstanceState)
+  PluginsUtil.callElevents("onCreate",savedInstanceState)
 end
 
 function onCreateOptionsMenu(menu)
@@ -269,6 +272,7 @@ function onCreateOptionsMenu(menu)
   fileMenu=menu.findItem(R.id.subMenu_file)
   projectMenu=menu.findItem(R.id.subMenu_project)
   moreMenu=menu.findItem(R.id.subMenu_more)
+  pluginsMenu=menu.findItem(R.id.subMenu_plugins)
 
   --菜单组
   StateByFileAndEditorMenus={saveFileMenu}
@@ -277,9 +281,29 @@ function onCreateOptionsMenu(menu)
   StateByProjectMenus={binMenu,closeProjectMenu,binRunMenu}
 
   screenConfigDecoder.events.menus={--自动刷新菜单显示
-    [600]={binRunMenu,codeMenu,toolsMenu},
-    [800]={fileMenu,projectMenu,moreMenu},
+    [600]={codeMenu,toolsMenu},
+    [800]={fileMenu,projectMenu,moreMenu,pluginsMenu},
   }
+  local pluginsActivities=plugins.activities
+  local pluginsActivitiesName=plugins.activitiesName
+  if #pluginsActivities==0 then
+    pluginsMenu.setVisible(false)
+   else
+    local pluginsMenuBuilder=pluginsMenu.getSubMenu()
+    for index,content in ipairs(pluginsActivities) do
+      pluginsMenuBuilder.add(pluginsActivitiesName[index])
+      .onMenuItemClick=function()
+        local rootPath,filePath
+        if OpenedProject then
+          rootPath=NowProjectDirectory.getPath()
+          if OpenedFile then
+            filePath=NowFile.getPath()
+          end
+        end
+        newActivity(content,{rootPath,filePath})
+      end
+    end
+  end
   PluginsUtil.callElevents("onCreateOptionsMenu",menu)
 
   LoadedMenu=true
@@ -393,7 +417,7 @@ function onOptionsItemSelected(item)
    elseif id==Rid.menu_more_openNewWindow then--打开新窗口
     activity.newActivity("main",{ProjectsPath},true)
   end
-  return PluginsUtil.callElevents("onOptionsItemSelected",item)
+  PluginsUtil.callElevents("onOptionsItemSelected",item)
 end
 
 function onKeyShortcut(keyCode,event)
@@ -422,7 +446,7 @@ function onKeyShortcut(keyCode,event)
       return true
     end
   end
-  return PluginsUtil.callElevents("onKeyShortcut",keyCode,event)
+  PluginsUtil.callElevents("onKeyShortcut",keyCode,event)
 end
 
 
@@ -449,22 +473,11 @@ function onConfigurationChanged(config)
   MyAnimationUtil.ScrollView.onScrollChange(NowEditor,NowEditor.getScrollX(),NowEditor.getScrollY(),0,0,appBarLayout,nil)
   refreshSubTitle()
   refreshMoveCloseHeight(config.screenHeightDp)
-  return PluginsUtil.callElevents("onConfigurationChanged",config)
+  PluginsUtil.callElevents("onConfigurationChanged",config)
 end
 
 notFirstOnResume=false
 function onResume()
-  if notFirstOnResume then
-    if OpenedFile and EditorUtil.isPreviewing then
-      EditorUtil.switchPreview(false)
-      if IsEdtor then
-        reOpenFile()
-      end
-      EditorUtil.switchPreview(true)
-     elseif OpenedFile and IsEdtor then
-      reOpenFile()
-    end
-  end
   local reload=false
   if oldJesse205LibHl~=getSharedData("Jesse205Lib_Highlight")
     or oldAndroidXHl~=getSharedData("AndroidX_Highlight")
@@ -472,10 +485,9 @@ function onResume()
     reload=true
     application.set("luaeditor_initialized",false)
   end
-  local isNotSysNightMode=not(ThemeUtil.isSysNightMode())
   if reload
-    or (oldTheme~=ThemeUtil.getAppTheme() and isNotSysNightMode)
-    or (oldDarkActionBar~=getSharedData("theme_darkactionbar") and isNotSysNightMode)
+    or (oldTheme~=ThemeUtil.getAppTheme())
+    or (oldDarkActionBar~=getSharedData("theme_darkactionbar"))
     or oldRichAnim~=getSharedData("richAnim")
     or ProjectsPath~=File(getSharedData("projectsDir")).getPath()
     then
@@ -533,6 +545,16 @@ function onResume()
           EditorUtil.switchPreview(false)
         end
         oldEditorPreviewButton=newEditorPreviewButton
+      end
+
+      if OpenedFile and EditorUtil.isPreviewing then
+        EditorUtil.switchPreview(false)
+        if IsEdtor then
+          reOpenFile()
+        end
+        EditorUtil.switchPreview(true)
+       elseif OpenedFile and IsEdtor then
+        reOpenFile()
       end
 
     end

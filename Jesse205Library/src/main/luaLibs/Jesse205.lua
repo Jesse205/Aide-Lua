@@ -1,7 +1,7 @@
 local Jesse205={}
 _G.Jesse205=Jesse205
-Jesse205._VERSION="10.1.2(Pro)"--库版本名
-Jesse205._VERSIONCODE=101299--库版本号
+Jesse205._VERSION="11.1.0(Pro)"--库版本名
+Jesse205._VERSIONCODE=111099--库版本号
 Jesse205._ENV=_ENV
 Jesse205.themeType="Jesse205"--主题类型
 
@@ -11,6 +11,7 @@ local context=activity or service--当前context
 Jesse205.context=context
 local resources=context.getResources()--当前resources
 _G.resources=resources
+R=luajava.bindClass(context.getPackageName()..".R")
 
 if activity then
   window=activity.getWindow()

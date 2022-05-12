@@ -1,0 +1,57 @@
+{
+  onCreate=function(savedInstanceState)
+    local buttons={
+      {"格式化","formatMenu"},
+      {"导入分析","checkImportMenu"},
+      {"JavaApi","javaApiMenu"},
+      {"二次打包","binMenu"},
+    }
+    local layouts={}
+    function newCommandButton(text,menu)
+      return loadlayout2({
+        AppCompatTextView;
+        onClick=function()
+          onOptionsItemSelected(_ENV[menu])--点击菜单
+        end;
+        text=text;
+        gravity="center";
+        layout_height="fill";
+        --padding="8dp";
+        --typeface=Typeface.DEFAULT_BOLD;
+        paddingLeft="8dp";
+        paddingRight="8dp";
+        minWidth="40dp";
+        allCaps=false;
+        --padding="16dp";
+        focusable=true;
+        textColor=theme.color.ActionBar.colorControlNormal;
+        background=ThemeUtil.getRippleDrawable(theme.color.rippleColorPrimary)
+      })
+    end
+    appBarLinearLayout.addView(loadlayout2( {
+      HorizontalScrollView;
+      horizontalScrollBarEnabled=false;
+      layout_width="fill";
+      layout_height="40dp";
+      paddingLeft="8dp";
+      paddingRight="8dp";
+      clipToPadding=false;
+      {
+        LinearLayoutCompat;
+        layout_height="fill";
+        layout_width="fill";
+        id="commandBar";
+      };
+    },layouts),0)
+    local commandBar=layouts.commandBar
+    for index,content in ipairs(buttons) do
+      commandBar.addView(newCommandButton(content[1],content[2]))
+    end
+  end,
+  onCreateOptionsMenu=function(menu)
+    formatMenu=menu.findItem(R.id.menu_code_format)
+    checkImportMenu=menu.findItem(R.id.menu_code_checkImport)
+    javaApiMenu=menu.findItem(R.id.menu_tools_javaApiViewer)
+
+  end,
+}

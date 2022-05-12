@@ -476,11 +476,12 @@ end
 
 --符号栏按钮点击时输入符号
 function psButtonClick(view)
+  local text=view.text
   if NowEditorType=="CodeEditor" then
-    showSnackBar("Editor not supported")
+    NowEditor.cursor.onCommitText(text)
     --NowEditor.mConnection.commitText(view.text, 0)
-   else
-    NowEditor.paste(view.text)
+   elseif NowEditorType=="LuaEditor" then
+    NowEditor.paste(text)
   end
 end
 
@@ -1141,7 +1142,7 @@ end
 
 local loadedSymbolBar=false
 function refreshSymbolBar(state)
-  if state then
+  if state and IsEdtor then
     if not(loadedSymbolBar) then
       loadedSymbolBar=true
       local ps={"function()","(",")","[","]","{","}","\"","=",":",".",",",";","_","+","-","*","/","\\","%","#","^","$","?","&","|","<",">","~","'"};

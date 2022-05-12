@@ -42,6 +42,7 @@ ThemeUtil.APPTHEMES={
       preview=0xfff44336,
     },
   },
+  --[[
   {--无限黑
     name="Dark",
     show={
@@ -49,7 +50,7 @@ ThemeUtil.APPTHEMES={
       preview=0xff000000,
     },
     night=true,
-  },
+  },]]
 }
 ThemeUtil.NowAppTheme=nil
 
@@ -236,18 +237,19 @@ ThemeUtil.getAppTheme=getAppTheme
 --刷新UI
 function ThemeUtil.refreshUI()
   local themeKey,appTheme
+  --[[主题切换已优化
   if isSysNightMode() then--系统是暗色模式
     themeKey="Dark"--强制启动暗色模式
     appTheme=Name2AppTheme[themeKey]
-   else
-    themeKey=getAppTheme()--获取当前设置的主题
-    appTheme=Name2AppTheme[themeKey]--获取主题配置
-    if not(appTheme) then--主图里面没有，可能是废除了这个主题
-      themeKey="Default"
-      appTheme=Name2AppTheme[themeKey]
-      setAppTheme(themeKey)--自动设置会默认
-    end
+   else]]
+  themeKey=getAppTheme()--获取当前设置的主题
+  appTheme=Name2AppTheme[themeKey]--获取主题配置
+  if not(appTheme) then--主图里面没有，可能是废除了这个主题
+    themeKey="Default"
+    appTheme=Name2AppTheme[themeKey]
+    setAppTheme(themeKey)--自动设置会默认
   end
+  --end
 
   --构建用的主题名字
   local themeString=("Theme_%s_%s"):format(Jesse205.themeType,themeKey)

@@ -6,6 +6,6 @@
     <style name="BaseTheme" parent="AppTheme"/>
     <style name="BaseStyle" parent="AppTheme"/>
         
-    <style name="Theme.Jesse205.Welcome" parent="Theme.Jesse205.DayNight"/>
+    <style name="Theme.Jesse205.Welcome" parent="Theme.Jesse205.Default"/>
     
 </resources>

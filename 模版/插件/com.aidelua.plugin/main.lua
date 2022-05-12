@@ -14,7 +14,7 @@ import "androidx.coordinatorlayout.widget.CoordinatorLayout"
 --activity.setTheme(R.style.AppTheme)
 activity.setContentView(loadlayout("layout"))
 actionBar=activity.getSupportActionBar()
-actionBar.setDisplayHomeAsUpEnabled(true) 
+actionBar.setDisplayHomeAsUpEnabled(true)
 
 function onOptionsItemSelected(item)
   local id=item.getItemId()

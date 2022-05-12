@@ -16,11 +16,6 @@
         android:icon="@drawable/ic_play_outline"
         app:showAsAction="always"
         android:title="@string/run"/>
-    <item
-        android:id="@+id/menu_bin_run"
-        android:icon="@drawable/ic_package_variant"
-        app:showAsAction="@integer/Jesse205_menu_showAsAction_600dp"
-        android:title="@string/project_bin_run"/>
     
     <!--文件 子菜单-->
     <item
@@ -44,9 +39,11 @@
         android:title="@string/project_popup">
         <menu>
             <item
+                android:id="@+id/menu_bin_run"
+                android:title="@string/project_bin_run"/>
+            <item
                 android:id="@+id/menu_project_bin"
                 android:title="@string/project_bin"/>
-            
             <item
                 android:id="@+id/menu_project_close"
                 android:title="@string/project_close"/>

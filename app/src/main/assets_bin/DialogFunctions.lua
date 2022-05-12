@@ -17,7 +17,7 @@ function deleteFileDialog(name,file)
       showSnackBar(R.string.delete_failed)
     end
   end)
-  .setNegativeButton(android.R.string.no,nil)
+  .setNegativeButton(android.R.string.cancel,nil)
   .show()
 end
 
@@ -55,7 +55,7 @@ function createDirsDialog(nowDir)--创建文件夹对话框
       return true
     end
   end,true,true)
-  :setNegativeButton(android.R.string.no,nil)
+  :setNegativeButton(android.R.string.cancel,nil)
   builder:show()
 end
 
@@ -134,7 +134,7 @@ function renameDialog(oldFile)--重命名对话框
       return true
     end
   end,true,true)
-  :setNegativeButton(android.R.string.no,nil)
+  :setNegativeButton(android.R.string.cancel,nil)
   builder:show()
   local _,splitEnd=utf8.find(fileName,".+%.")
   if splitEnd then
