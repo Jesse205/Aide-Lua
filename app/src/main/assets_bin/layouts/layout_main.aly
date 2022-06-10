@@ -45,43 +45,7 @@
     layout_weight=1;
     id="editorGroup";
     --visibility=View.GONE;
-    {
-      FrameLayout;
-      layout_height="fill";
-      layout_width="fill";
-      --gravity="center";
-      layoutTransition=newLayoutTransition();
-      id="luaEditorParent";
-      {
-        ProgressBar;
-        id="luaEditorProgressBar";
-        layout_gravity="center";
-      };
-      {
-        EditText;
-        layout_width="fill";
-        layout_height="fill";
-        id="luaEditorPencilEdit";
-        gravity="top|left";
-        text=" ";
-        textSize=0;
-        
-      };
-      {
-        MyLuaEditor;
-        layout_height="fill";
-        id="luaEditor";
-        layout_width="fill";
-        focusable=true;
-        textHighlightColor=0x99616161;
-        keywordColor=0xff3f51b5;
-        stringColor=0xffc2185b;
-        commentColor=0xff9e9e9e;
-        basewordColor=theme.color.Blue;
-        userwordColor=0xff5c6bc0;
-        textSize=math.dp2int(14);
-      };
-    };
+   
 
     {
       LinearLayoutCompat;

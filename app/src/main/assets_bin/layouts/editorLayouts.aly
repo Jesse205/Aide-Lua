@@ -1,4 +1,8 @@
 {--各种编辑器，编辑器的id将被赋予成局部变量
+  NoneView={
+    layout={}
+  },
+
   LuaEditor={--Lua编辑器
     layout={
       FrameLayout;
@@ -7,12 +11,12 @@
       layoutTransition=newLayoutTransition();
       id="editorParent";
       {
-        ProgressBar;
+        ProgressBar;--进度条
         id="progressBar";
         layout_gravity="center";
       };
       {
-        EditText;
+        EditText;--手写编辑框
         layout_width="fill";
         layout_height="fill";
         id="pencilEdit";
@@ -21,7 +25,7 @@
         textSize=0;
       };
       {
-        MyLuaEditor;
+        MyLuaEditor;--Lua编辑器
         layout_height="fill";
         id="editor";
         layout_width="fill";
@@ -38,6 +42,10 @@
     init=function(ids)
 
     end,
+    action={
+      undo="default",
+      redo="default",
+    },
   },
   CodeEditor={
     layout={
@@ -58,6 +66,10 @@
           overScrollEnabled=false;
         };
       };
+    },
+    action={
+      undo="default",
+      redo="default",
     },
   },
 }
