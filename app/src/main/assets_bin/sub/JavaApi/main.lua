@@ -109,7 +109,7 @@ function searchItem(text,callback)
       return
     end
     searchButton.clickable=false
-    
+
     --延迟展示进度条
     Handler().postDelayed(Runnable({
       run=function()
