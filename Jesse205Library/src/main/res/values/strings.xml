@@ -35,7 +35,7 @@
     <string name="Jesse205_permission_requestAll_tips">Give all permissions with one click</string>
     <string name="Jesse205_agreement_checkBox">I have read and agree to this %1$s</string>
     <string name="Jesse205_step_previous">Previous</string>
-    <string name="Jesse205_step_next">Next step</string>
+    <string name="Jesse205_step_next">Next</string>
     <string name="Jesse205_step_finish">Finish</string>
     <string name="Jesse205_theme_darkMode">Dark mode</string>
     <string name="Jesse205_theme_default">Blue</string>

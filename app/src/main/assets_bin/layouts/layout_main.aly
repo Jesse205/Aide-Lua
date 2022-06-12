@@ -6,7 +6,7 @@
   --backgroundColor=theme.color.windowBackground;
   layoutTransition=newLayoutTransition();
   id="mainEditorLay";
-  {
+  {--顶部操作栏
     CardView;
     layout_width="fill";
     id="appBarLayout";
@@ -38,58 +38,21 @@
       };
     };
   };
-  {
+  {--编辑器部分
     CoordinatorLayout;
     layout_height="fill";
     layout_width="fill";
     layout_weight=1;
-    id="editorGroup";
     --visibility=View.GONE;
-   
-
     {
-      LinearLayoutCompat;
+      LinearLayout;
       layout_height="fill";
       layout_width="fill";
-      layoutTransition=newLayoutTransition();
-      id="codeEditorParent";
-      visibility=View.GONE;
-      {
-        MyCodeEditor;
-        layout_height="fill";
-        id="codeEditor";
-        layout_width="fill";
-        focusable=true;
-        nonPrintablePaintingFlags=CodeEditor.FLAG_DRAW_WHITESPACE_LEADING;
-        textSize=14;
-        overScrollEnabled=false;
-      };
+      id="editorGroup";
     };
-    {
-      LinearLayoutCompat;
-      layout_height="fill";
-      layout_width="fill";
-      layoutTransition=newLayoutTransition();
-      id="photoViewParent";
-      visibility=View.GONE;
-      {
-        PhotoView;
-        layout_height="fill";
-        id="photoView";
-        layout_width="fill";
-        padding="32dp";
-      };
-    };
-    {
-      LinearLayoutCompat;
-      layout_height="fill";
-      layout_width="fill";
-      id="layoutView";
-      visibility=View.GONE;
-    };
-    "layout_previewChips";
+    "layout_previewChips";--预览按钮
   };
-  {
+  {--底部操作栏
     CardView;
     layout_width="fill";
     id="bottomAppBar";
@@ -105,7 +68,7 @@
       orientation="vertical";
       id="bottomAppBarLinearLayout";
       layoutTransition=newLayoutTransition();
-      {
+      {--符号栏
         HorizontalScrollView;
         horizontalScrollBarEnabled=false;
         layout_width="fill";

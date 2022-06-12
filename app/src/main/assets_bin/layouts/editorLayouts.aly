@@ -1,6 +1,12 @@
 {--各种编辑器，编辑器的id将被赋予成局部变量
   NoneView={
-    layout={}
+    layout={LinearLayoutCompat},
+    action={
+      undo=nil,
+      redo=nil,
+      format=nil,
+      search=nil,
+    },
   },
 
   LuaEditor={--Lua编辑器
@@ -45,31 +51,91 @@
     action={
       undo="default",
       redo="default",
+      format="default",
+      search="default",
+      commented=function(ids)
+        local editor=ids.editor
+        local selectedText=editor.getSelectedText()
+        if #selectedText~=0 then
+          if NowFileType=="lua" or NowFileType=="aly" then--Lua类型
+            if selectedText:find("\n") then
+              local equals=""
+              while selectedText:find("]"..equals.."]") do
+                equals=equals.."="
+              end
+              editor.paste("--["..equals.."["..selectedText.."]"..equals.."]")
+             else
+              editor.paste("--"..selectedText.."")
+            end
+           else
+            showSnackBar(R.string.file_not_supported)
+          end
+        end
+      end,
     },
   },
   CodeEditor={
     layout={
+      LinearLayoutCompat;
+      layout_height="fill";
+      layout_width="fill";
+      layoutTransition=newLayoutTransition();
+      id="editorParent";
       {
-        LinearLayoutCompat;
+        MyCodeEditor;
         layout_height="fill";
+        id="editor";
         layout_width="fill";
-        layoutTransition=newLayoutTransition();
-        id="codeEditorParent";
-        {
-          MyCodeEditor;
-          layout_height="fill";
-          id="codeEditor";
-          layout_width="fill";
-          focusable=true;
-          nonPrintablePaintingFlags=CodeEditor.FLAG_DRAW_WHITESPACE_LEADING;
-          textSize=14;
-          overScrollEnabled=false;
-        };
+        focusable=true;
+        nonPrintablePaintingFlags=CodeEditor.FLAG_DRAW_WHITESPACE_LEADING;
+        textSize=14;
+        overScrollEnabled=false;
       };
     },
     action={
       undo="default",
       redo="default",
+      format=function(ids)end,
+      search={
+        start=function(ids)
+          ids.editor.mStartedActionMode=1
+        end,
+        search=function(ids,text,gotoNext)
+          local editor=ids.editor
+          editor.getSearcher().search(tostring(text))
+          if gotoNext then
+            editor.getSearcher().gotoNext()
+          end
+        end,
+        finish=function(editorGroupViews)
+          local editor=editorGroupViews.editor
+          editor.mStartedActionMode=0
+          editor.getSearcher().stopSearch()
+        end
+      },
     },
   },
+  PhotoView={
+    layout={
+      LinearLayoutCompat;
+      layout_height="fill";
+      layout_width="fill";
+      layoutTransition=newLayoutTransition();
+      id="editorParent";
+      visibility=View.GONE;
+      {
+        PhotoView;
+        layout_height="fill";
+        id="editor";
+        layout_width="fill";
+        padding="32dp";
+      };
+    },
+    action={
+      undo=nil,
+      redo=nil,
+      format=nil,
+      search=nil,
+    },
+  }
 }

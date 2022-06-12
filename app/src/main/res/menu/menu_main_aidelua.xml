@@ -45,6 +45,12 @@
                 android:id="@+id/menu_project_bin"
                 android:title="@string/project_bin"/>
             <item
+                android:id="@+id/menu_project_build"
+                android:title="@string/project_build"/>
+            <item
+                android:id="@+id/menu_project_settings"
+                android:title="@string/settings"/>
+            <item
                 android:id="@+id/menu_project_close"
                 android:title="@string/project_close"/>
         </menu>

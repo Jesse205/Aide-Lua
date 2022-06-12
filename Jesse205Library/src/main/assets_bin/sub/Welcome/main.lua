@@ -101,16 +101,20 @@ function onConfigurationChanged(config)
   screenConfigDecoder:decodeConfiguration(config)
   if config.orientation==Configuration.ORIENTATION_LANDSCAPE then--横屏时
     local linearParams=previousButton.getLayoutParams()
+    linearParams.width=math.dp2int(64)
     linearParams.gravity=Gravity.TOP|Gravity.CENTER
     previousButton.setLayoutParams(linearParams)
     local linearParams=nextButton.getLayoutParams()
+    linearParams.width=math.dp2int(64)
     linearParams.gravity=Gravity.BOTTOM|Gravity.CENTER
     nextButton.setLayoutParams(linearParams)
    else
     local linearParams=previousButton.getLayoutParams()
+    linearParams.width=math.dp2int(64)
     linearParams.gravity=Gravity.LEFT|Gravity.CENTER
     previousButton.setLayoutParams(linearParams)
     local linearParams=nextButton.getLayoutParams()
+    linearParams.width=math.dp2int(64)
     linearParams.gravity=Gravity.RIGHT|Gravity.CENTER
     nextButton.setLayoutParams(linearParams)
   end

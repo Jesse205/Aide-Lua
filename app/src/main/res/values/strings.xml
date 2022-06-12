@@ -74,6 +74,7 @@
     <string name="project_popup">Project...</string>
     <string name="project_bin_run">Pack and run</string>
     <string name="project_bin">Second package</string>
+    <string name="project_build">Build project</string>
     <string name="project_open_first">Please open a project first.</string>
     <string name="project_open_toast">Opened project: %1$s</string>
     <string name="project_no_open">Project not opened</string>
@@ -95,6 +96,7 @@
     <string name="project_appSubtitle_380dp">Prj: %1$s</string>
     <string name="project_appSubtitle_390dp">Project: %1$s</string>
     <string name="project_close">Close project</string>
+    <string name="project_settings">Project settings</string>
     <string name="projects_path">Projects path</string>
     
     <string name="binpoject_loading">Packing...</string>

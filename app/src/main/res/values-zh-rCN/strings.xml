@@ -71,8 +71,9 @@
     <string name="project">项目</string>
     <string name="project_root">项目根目录</string>
     <string name="project_popup">项目...</string>
-    <string name="project_bin_run">打包运行</string>
+    <string name="project_bin_run">二次打包并安装</string>
     <string name="project_bin">二次打包</string>
+    <string name="project_build">构建项目</string>
     <string name="project_open_first">请先打开一个项目。</string>
     <string name="project_open_toast">已打开项目：%1$s</string>
     <string name="project_no_open">未打开项目</string>
@@ -92,6 +93,7 @@
     <string name="project_appSubtitle_380dp">项目: %1$s</string>
     <string name="project_appSubtitle_390dp">项目: %1$s</string>
     <string name="project_close">关闭项目</string>
+    <string name="project_settings">项目设置</string>
     <string name="projects_path">项目路径</string>
     
     <string name="binpoject_loading">正在打包...</string>

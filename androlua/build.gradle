@@ -8,16 +8,14 @@ android {
         //applicationId "com.androlua"
         minSdkVersion 14
         targetSdkVersion 28
-        versionCode 1699
-        versionName "5.0.10(1.6)(armeabi-v7a)"
-        
+        versionCode 1199
+        versionName "5.0.18(1.1)(armeabi-v7a,arm64-v8a)"
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             ndk {abiFilters 'armeabi-v7a', 'x86', 'arm64-v8a'}
-            
         }
         debug {
             minifyEnabled false
@@ -28,13 +26,11 @@ android {
         main {
             //jniLibs.srcDirs = ['libs']
         }
-
     }
     lintOptions {
-          abortOnError false
-          checkReleaseBuilds false
+        abortOnError false
+        checkReleaseBuilds false
     }
-    
 }
 
 dependencies {

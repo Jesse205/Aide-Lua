@@ -1,3 +1,11 @@
+--检查是不是路径相同的文件
+function isSamePathFileByPath(filePath1,filePath2)
+  return string.lower(filePath1)==string.lower(filePath2)
+end
+function isSamePathFile(file1,file2)
+  return isSamePathFileByPath(file1.getPath(),file2.getPath())
+end
+--[=[
 editorFunc={
   save=function()
     if IsEdtor then
@@ -227,41 +235,7 @@ editorFunc={
   end
 }
 shortPath=ProjectUtil.shortPath
-
---[[
-function setActiveFileItem(item,notifyDataSetChanged)
-  if notSafeModeEnable then
-    if NowFileShowData then
-      --NowFileShowData.icon.colorFilter=nil;
-      local fileType=NowFileShowData.fileType
-      if fileType then
-        fileType=string.upper(fileType)
-      end
-      NowFileShowData.icon.colorFilter=FileColor[fileType or "normal"] or FileColor.normal
-      NowFileShowData.title.textColor=theme.color.textColorPrimary
-      if NowFileShowData.highLightCard then
-        NowFileShowData.highLightCard.cardBackgroundColor=0
-      end
-    end
-    NowFileShowData=item
-    if item and item.file.isFile() then
-      --item.icon.colorFilter=theme.color.colorAccent;
-      local fileType=item.fileType
-      if fileType then
-        fileType=string.upper(fileType)
-      end
-      item.icon.colorFilter=FileColor.active
-      item.title.textColor=theme.color.colorAccent
-      if item.highLightCard then
-        item.highLightCard.cardBackgroundColor=theme.color.rippleColorAccent
-      end
-    end
-  end
-  if notifyDataSetChanged then
-    adp.notifyDataSetChanged()
-  end
-end
-]]
+]=]
 
 function getPathTab(index)
   local tag=PathsTabShowList[index]
@@ -1058,31 +1032,6 @@ function onEditorSelectionChangedListener(view,status,start,end_)
 
         local inflater=mode.getMenuInflater()
         inflater.inflate(R.menu.menu_editor,menu)
-        --[[
-        local array=activity.getTheme().obtainStyledAttributes({
-          android.R.attr.actionModeSelectAllDrawable,
-          android.R.attr.actionModeCutDrawable,
-          android.R.attr.actionModeCopyDrawable,
-          android.R.attr.actionModePasteDrawable,
-        })
-
-        menu.add(0,0,0,android.R.string.selectAll)
-        .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-        .setIcon(array.getResourceId(0,0))
-
-        menu.add(0,1,0,android.R.string.cut)
-        .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-        .setIcon(array.getResourceId(1,0))
-
-        menu.add(0,2,0,android.R.string.copy)
-        .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-        .setIcon(array.getResourceId(2,0))
-
-        menu.add(0,3,0,android.R.string.paste)
-        .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-        .setIcon(array.getResourceId(3,0))
-
-        array.recycle()]]
         return true
       end,
       onActionItemClicked=function(mode,item)
@@ -1113,13 +1062,6 @@ function onEditorSelectionChangedListener(view,status,start,end_)
     _clipboardActionMode.finish()
     _clipboardActionMode=nil
   end
-end
-
-
-function buildKeysCache()
-  KeysCache={
-    isResDir={},
-  }
 end
 
 

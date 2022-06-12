@@ -1,9 +1,8 @@
 require "import"
-initApp=true
-
---useCustomAppToolbar=true
-
+initApp=true--首页面，初始化
 require "Jesse205"
+
+--检测是否需要进入欢迎页面
 import "agreements"
 welcomeAgain=not(getSharedData("welcome"))
 if not(welcomeAgain) then
@@ -21,6 +20,8 @@ if welcomeAgain then
   activity.finish()
   return
 end
+
+--开启百度统计
 pcall(function()
   StatService.setAuthorizedState(activity,true)
 end)
@@ -31,13 +32,6 @@ import "android.content.ComponentName"
 import "android.provider.DocumentsContract"
 import "androidx.drawerlayout.widget.DrawerLayout"
 
---import "com.google.android.material.textfield.*"
---import "com.google.android.material.appbar.AppBarLayout"
---import "com.google.android.material.bottomappbar.BottomAppBar"
---import "com.google.android.material.chip.*"
---import "com.google.android.material.snackbar.Snackbar"
---import "com.google.android.material.bottomsheet.BottomSheetDialog"
---import "com.google.android.material.navigation.NavigationView"
 import "com.google.android.material.tabs.TabLayout"
 import "com.google.android.material.chip.Chip"
 import "com.google.android.material.chip.ChipGroup"
@@ -48,9 +42,6 @@ import "com.bumptech.glide.load.engine.DiskCacheStrategy"
 
 import "com.nwdxlgzs.view.photoview.PhotoView"
 import "com.pixplicity.sharp.Sharp"
-import "io.github.rosemoe.editor.widget.CodeEditor"
-import "io.github.rosemoe.editor.widget.schemes.SchemeDarcula"
-import "io.github.rosemoe.editor.widget.schemes.SchemeGitHub"
 
 import "com.Jesse205.layout.MyEditDialogLayout"
 import "com.Jesse205.app.actionmode.SearchActionMode"
@@ -59,20 +50,21 @@ import "com.Jesse205.util.FileUtil"
 import "com.Jesse205.util.ScreenFixUtil"
 import "com.Jesse205.FileInfoUtils"
 
-import "ProjectUtil"
-import "ReBuildTool"
-import "CreateFile"
---import "CreateProject"
-import "EditorUtil"
-import "DefaultEditorText"
-import "FileTemplates"
+safeModeEnable=File("/sdcard/aidelua_safemode").exists()
+notSafeModeEnable=not(safeModeEnable)
+application.set("safeModeEnable",safeModeEnable)
+
 
 import "AppFunctions"
 import "DialogFunctions"
+import "CreateFile"
 
 import "getImportCode"
 
-import "item"
+import "FilesBrowserManager"
+import "EditorsManager"
+import "FilesTabManager"
+import "layouts.item"
 
 import "sub.LayoutHelper2.loadpreviewlayout"
 
@@ -87,38 +79,9 @@ PermissionUtil.smartRequestPermission({"android.permission.WRITE_EXTERNAL_STORAG
 
 DefaultPakcagePath=package.path
 
-safeModeEnable=File("/sdcard/aidelua_safemode").exists()
-notSafeModeEnable=not(safeModeEnable)
-application.set("safeModeEnable",safeModeEnable)
 
 
 subWindow_ProjectPath,subWindow_FilePath=...
-
---初始化变量(虽然没什么用)
-SdPath=ProjectUtil.SdPath--内部存储路径
-ProjectsPath=ProjectUtil.ProjectsPath--所有项目路径
-ProjectsFile=ProjectUtil.ProjectsFile
-LibsRelativePathMatch=ProjectUtil.LibsRelativePathMatch
-LibsRelativePathType=ProjectUtil.LibsRelativePathType
-
---TemplatesPath=activity.getLuaDir("templates")--模版路径
---LibrariesPath=activity.getLuaDir("libraries")--库路径
-
---ProjectsPathLength=utf8.len(ProjectsPath)
-Searching=false
-
-NowFile=nil--已打开文件
-NowFileShowData=nil
-NowFileType=nil
-NowDirectory=nil--已打开文件夹
-NowDirectoryFilesList={}
-NowFilePosition=nil--当前文件在文件列表中位置
-FilesPositions={}
-
-NowProjectDirectory=nil--项目根路径
-OpenedProject=false--是否打开了工程
-OpenedFile=false--是否打开了文件
-AppName=nil
 
 DirData=nil
 
@@ -130,7 +93,6 @@ FilesListScroll={}
 PathsTabList={}
 PathsTabShowList={}
 
-buildKeysCache()
 magnifierPosition={}
 
 oldJesse205LibHl=getSharedData("Jesse205Lib_Highlight")
@@ -144,70 +106,24 @@ oldEditorPreviewButton=getSharedData("editor_previewButton")
 
 --editor_magnify=getSharedData("editor_magnify")
 
---文件颜色
-FilesColor={
-  normal=0xFF9E9E9E,--普通颜色
-  --active=theme.color.colorAccent,--一已打开文件颜色
-  folder=0xFFF9A825,--文件夹颜色
-
-  --按文件类型
-  APK=0xFF00E676,
-  LUA=0xFF448AFF,
-  ALY=0xFF64B5F6,
-  PNG=0xFFF44336,
-  GRADLE=0xFF0097A7,
-  XML=0xffff6f00,
-  DEX=0xFF00BCD4,
-  JAVA=0xFF2962FF,
-  JAR=0xffe64a19,
-  ZIP=0xFF795548,
-  HTML=0xffff5722,
-  JSON=0xffffa000,
-}
-FilesColor.JPG=FilesColor.PNG
-FilesColor["7Z"]=FilesColor.ZIP
-FilesColor.tar=FilesColor.ZIP
-FilesColor.RAR=FilesColor.ZIP
-FilesColor.SVG=FilesColor.XML
---FilesColor.JSON=FilesColor.XML
-
 lastBackTime=0
 
 SDK_INT=Build.VERSION.SDK_INT
 
 activityStopped=false
 
-MyLuaEditor=editor2my(LuaEditor)
-MyCodeEditor=editor2my(CodeEditor)
-
 activity.setTitle(R.string.app_name)
 activity.setContentView(loadlayout2("layout"))
 actionBar.setTitle(R.string.app_name)
 actionBar.setDisplayHomeAsUpEnabled(true)
 
-EditorUtil.IsEditors={
-  LuaEditor=true,
-  CodeEditor=true,
-  PhotoView=false,
-  LayoutView=false,
-}
-EditorUtil.Editors={
-  LuaEditor=luaEditor,
-  CodeEditor=codeEditor,
-  PhotoView=photoView,
-  LayoutView=layoutView,
-}
-EditorUtil.EditorsGroup={
-  LuaEditor=luaEditorParent,
-  CodeEditor=codeEditorParent,
-  PhotoView=photoViewParent,
-  LayoutView=layoutView,
-}
-EditorUtil.switchEditor("LuaEditor")
 
+EditorUtil.switchEditor("NoneView")
+
+--[[
 previewChipGroupSelectedId=editChip.getId()
 editChip.setChecked(true)
-
+]]
 LuaReservedCharacters={"switch","if","then","and","break","do",
   "else","elseif","end","false",
   "for","function","in","local","nil","not",
@@ -227,6 +143,7 @@ if notSafeModeEnable then
 end
 
 function onCreate(savedInstanceState)
+  --[[
   local openedProject=subWindow_ProjectPath or getSharedData("openedproject")
   openedProject=tostring(openedProject)
   if openedProject=="nil" then
@@ -253,7 +170,7 @@ function onCreate(savedInstanceState)
     refresh()
     editorFunc.open(true)
     toggle.syncState()
-  end
+  end]]
   PluginsUtil.callElevents("onCreate",savedInstanceState)
 end
 
@@ -284,6 +201,8 @@ function onCreateOptionsMenu(menu)
     [600]={codeMenu,toolsMenu},
     [800]={fileMenu,projectMenu,moreMenu,pluginsMenu},
   }
+
+  --添加插件菜单
   local pluginsActivities=plugins.activities
   local pluginsActivitiesName=plugins.activitiesName
   if #pluginsActivities==0 then
@@ -314,15 +233,17 @@ function onOptionsItemSelected(item)
   local id=item.getItemId()
   local Rid=R.id
   local aRid=android.R.id
+  local editorActions=EditorsManager.action
   if id==aRid.home then--菜单键
-    editorFunc.open()
+    FilesBrowserManager.switchState()
    elseif id==Rid.menu_undo then--撤销
-    editorFunc.undo()
+    editorActions.undo()
    elseif id==Rid.menu_redo then--重装
-    editorFunc.redo()
+    editorActions.redo()
    elseif id==Rid.menu_run then--运行
-    editorFunc.run()
+    ProjectManager.runProject()
    elseif id==Rid.menu_bin_run then--二次打包
+    --[[
     local succeed
     if OpenedFile and IsEdtor then
       succeed=saveFile()
@@ -331,8 +252,9 @@ function onOptionsItemSelected(item)
     end
     if succeed then
       ReBuildTool(NowProjectDirectory.getPath(),true)
-    end
+    end]]
    elseif id==Rid.menu_project_bin then--二次打包
+    --[[
     local succeed
     if OpenedFile and IsEdtor then
       succeed=saveFile()
@@ -341,19 +263,21 @@ function onOptionsItemSelected(item)
     end
     if succeed then
       ReBuildTool(NowProjectDirectory.getPath())
-    end
+    end]]
    elseif id==Rid.menu_project_close then--关闭项目
+   ProjectManager.closeProject()
     --closeProject()
-    refresh(ProjectsFile)--打开项目文件夹，就自动关闭了项目
+    --refresh(ProjectsFile)--打开项目文件夹，就自动关闭了项目
    elseif id==Rid.menu_file_save then--保存
     editorFunc.save()
    elseif id==Rid.menu_file_close then--关闭文件
     editorFunc.closeFile()
    elseif id==Rid.menu_code_format then--格式化
     editorFunc.format()
-   elseif id==Rid.menu_code_search then
-    editorFunc.search()
+   elseif id==Rid.menu_code_search then--代码搜索
+    EditorsManager.startSearch()
    elseif id==Rid.menu_code_checkImport then--检查导入
+    --[[
     local packageName=activity.getPackageName()
     if OpenedProject then--打开了工程
       local projectPath=NowProjectDirectory.getPath()
@@ -366,7 +290,7 @@ function onOptionsItemSelected(item)
         end
       end
     end
-    newSubActivity("FixImport",{NowEditor.text,packageName})
+    newSubActivity("FixImport",{NowEditor.text,packageName})]]
    elseif id==Rid.menu_tools_javaApiViewer then--JavaAPI浏览器
     newSubActivity("JavaApi")
    elseif id==Rid.menu_tools_javaApiViewer_windmill then--JavaAPI浏览器
@@ -404,6 +328,7 @@ function onOptionsItemSelected(item)
       end
     end
     newSubActivity("LayoutHelper2",{prjPath,layoutContent})]]--新的布局助手没做完
+    --[[
     if OpenedProject then
       if OpenedFile then
         newSubActivity("LayoutHelper",{NowProjectDirectory.getPath().."/app/src/main/assets_bin",NowFile.getPath()})
@@ -413,9 +338,9 @@ function onOptionsItemSelected(item)
      else
       newSubActivity("LayoutHelper")
     end
-
+]]
    elseif id==Rid.menu_more_openNewWindow then--打开新窗口
-    activity.newActivity("main",{ProjectsPath},true)
+    activity.newActivity("main",{ProjectManager.ProjectsPath},true)
   end
   PluginsUtil.callElevents("onOptionsItemSelected",item)
 end
@@ -423,26 +348,27 @@ end
 function onKeyShortcut(keyCode,event)
   local filteredMetaState = event.getMetaState() & ~KeyEvent.META_CTRL_MASK;
   if (KeyEvent.metaStateHasNoModifiers(filteredMetaState)) then
+    local editorActions=EditorsManager.action
     if keyCode==KeyEvent.KEYCODE_O then
-      editorFunc.open()
+      editorActions.open()
       return true
      elseif keyCode==KeyEvent.KEYCODE_S then
-      editorFunc.save()
+      FilesTabManager.saveFiles()
       return true
      elseif keyCode==KeyEvent.KEYCODE_L then
-      editorFunc.search()
+      EditorsManager.startSearch()
       return true
      elseif keyCode==KeyEvent.KEYCODE_E then
-      editorFunc.check()
+      editorActions.check()
       return true
      elseif keyCode==KeyEvent.KEYCODE_R then
-      editorFunc.run()
+      ProjectManager.runProject()
       return true
      elseif keyCode==KeyEvent.KEYCODE_Z then
-      editorFunc.undo()
+      editorActions.undo()
       return true
      elseif keyCode==KeyEvent.KEYCODE_F then
-      editorFunc.format()
+      editorActions.format()
       return true
     end
   end
@@ -787,16 +713,12 @@ if notSafeModeEnable then
           lang.a(package,methods)
         end
       end
-      --local Lexer=luajava.bindClass("b.b.a.b.k")
-      --local lang=Lexer.e()
-
-      local Lexer=luajava.bindClass("b.b.a.b.m")
-      local lang=Lexer.c()
+      local Lexer=luajava.bindClass("b.b.a.b.k")
+      local lang=Lexer.e()
 
       local names=application.get("editorBaseList")
       if not(names) then
-        --names=lang.g()--获取现在的names
-        names=lang.c()--获取现在的names
+        names=lang.g()--获取现在的names
         application.set("editorBaseList",names)
       end
       names=luajava.astable(names)
@@ -839,8 +761,7 @@ if notSafeModeEnable then
         end
         addPackages(lang,{"string","utf8","math","theme","Jesse205","AppPath","MyToast"})
       end
-      --lang.B(names)--设置成新的names
-      lang.b(names)--设置成新的names
+      lang.B(names)--设置成新的names
       return true
     end,
     function(success)
@@ -971,7 +892,7 @@ luaEditorPencilEdit.onFocusChange=function(view,hasFocus)
 end
 luaEditorPencilEdit.setBackground(nil)
 
-if ThemeUtil.NowAppTheme.night then
+if ThemeUtil.isSysNightMode() then
   codeEditor.setColorScheme(SchemeDarcula())
  else
   codeEditor.setColorScheme(SchemeGitHub())
