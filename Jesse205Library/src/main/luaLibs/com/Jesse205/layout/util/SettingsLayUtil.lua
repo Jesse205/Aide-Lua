@@ -411,4 +411,144 @@ function SettingsLayUtil.newAdapter(data,onItemClick,onItemLongClick)
     end,
   }))
 end
+
+function SettingsLayUtil.newAdapter2(config)
+  --[[config={
+  data,
+  onItemClick,
+  onItemLongClick,
+  creatorConfig={
+    onCreateViewHolder=function(ids,view,parent,viewType)
+      end
+    }
+  }]]
+  local data=config.data
+  local onItemClick=config.onItemClick
+  local onItemLongClick=config.onItemLongClick
+  local creatorConfig=config.creatorConfig
+  local onCreateViewHolder
+  if creatorConfig then
+    onCreateViewHolder=creatorConfig.onCreateViewHolder
+  end
+  return LuaCustRecyclerAdapter(AdapterCreator({
+    getItemCount=function()
+      return #data
+    end,
+    getItemViewType=function(position)
+      return data[position+1][1]
+    end,
+    onCreateViewHolder=function(parent,viewType)
+      local ids={}
+      local view=loadlayout2(itemsLay[viewType],ids)
+      local holder=LuaCustRecyclerHolder(view)
+      view.setTag(ids)
+      if not(onCreateViewHolder and onCreateViewHolder(ids,view,parent,viewType)==true) then
+      if viewType~=1 then
+        view.setFocusable(true)
+        view.setBackground(ThemeUtil.getRippleDrawable(theme.color.rippleColorPrimary,true))
+        view.onClick=function(view)
+          local data=ids._data
+          local key=data.key
+          if not(onItemClick and onItemClick(view,ids,key,data)) then
+            local statusView=ids.status
+            if statusView then
+              local checked=not(statusView.checked)
+              statusView.setChecked(checked)
+              if data.checked~=nil then
+                data.checked=checked
+               elseif data.key then
+                setSharedData(data.key,checked)
+              end
+            end
+          end
+        end
+        if onItemLongClick then
+          view.onLongClick=function(view)
+            local data=ids._data
+            local key=data.key
+            onItemLongClick(view,ids,key,data)
+          end
+        end
+      end
+      end
+      return holder
+    end,
+
+    onBindViewHolder=function(holder,position)
+      local data=data[position+1]
+      local layoutView=holder.view
+      local tag=layoutView.getTag()
+      tag._data=data
+      --datum
+      --tag.key=data.key
+      local title=data.title
+      local icon=data.icon
+      local summary=data.summary
+      local enabled=data.enabled
+      --View
+      local titleView=tag.title
+      local summaryView=tag.summary
+      local statusView=tag.status
+      local rightIconView=tag.rightIcon
+      local iconView=tag.icon
+
+      if title and titleView then
+        titleView.text=title
+      end
+      if summary and summaryView then
+        summaryView.text=summary
+      end
+      if icon and iconView then
+        if type(icon)=="number" then
+          iconView.setImageResource(icon)
+         else
+          Glide.with(activity)
+          .load(icon)
+          .transition(DrawableTransitionOptions.withCrossFade())
+          .into(iconView)
+        end
+      end
+      if enabled==false then
+        setAlpha({titleView,summaryView,iconView,rightIconView},0.5)
+        layoutView.setEnabled(false)
+        if statusView then
+          statusView.setEnabled(false)
+        end
+       else
+        setAlpha({titleView,summaryView,iconView,rightIconView},1)
+        layoutView.setEnabled(true)
+        if statusView then
+          statusView.setEnabled(true)
+        end
+      end
+      if statusView then
+        if data.checked~=nil then
+          statusView.setChecked(data.checked)
+         elseif data.key then
+          statusView.setChecked(getSharedData(data.key) or false)
+         else
+          statusView.setChecked(false)
+        end
+      end
+      if rightIconView then
+        local newPage=data.newPage
+        local visibility=rightIconView.getVisibility()
+        if newPage then
+          if newPage=="newApp" then
+            rightIconView.setImageResource(R.drawable.ic_launch)
+           else
+            rightIconView.setImageResource(R.drawable.ic_chevron_right)
+          end
+          if visibility~=View.VISIBLE then
+            rightIconView.setVisibility(View.VISIBLE)
+          end
+         else
+          if visibility~=View.GONE then
+            rightIconView.setVisibility(View.GONE)
+          end
+        end
+      end
+    end,
+  }))
+end
 return SettingsLayUtil

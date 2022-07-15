@@ -27,6 +27,11 @@ pcall(function()
 end)
 StatService.start(activity)
 
+--安全模式
+safeModeEnable=File("/sdcard/aidelua_safemode").exists()
+notSafeModeEnable=not(safeModeEnable)
+application.set("safeModeEnable",safeModeEnable)
+
 import "android.text.TextUtils$TruncateAt"
 import "android.content.ComponentName"
 import "android.provider.DocumentsContract"
@@ -49,11 +54,6 @@ import "com.Jesse205.app.dialog.EditDialogBuilder"
 import "com.Jesse205.util.FileUtil"
 import "com.Jesse205.util.ScreenFixUtil"
 import "com.Jesse205.FileInfoUtils"
-
-safeModeEnable=File("/sdcard/aidelua_safemode").exists()
-notSafeModeEnable=not(safeModeEnable)
-application.set("safeModeEnable",safeModeEnable)
-
 
 import "AppFunctions"
 import "DialogFunctions"
@@ -212,6 +212,7 @@ function onCreateOptionsMenu(menu)
     for index,content in ipairs(pluginsActivities) do
       pluginsMenuBuilder.add(pluginsActivitiesName[index])
       .onMenuItemClick=function()
+        --[[
         local rootPath,filePath
         if OpenedProject then
           rootPath=NowProjectDirectory.getPath()
@@ -219,7 +220,7 @@ function onCreateOptionsMenu(menu)
             filePath=NowFile.getPath()
           end
         end
-        newActivity(content,{rootPath,filePath})
+        newActivity(content,{rootPath,filePath})]]
       end
     end
   end
@@ -269,7 +270,7 @@ function onOptionsItemSelected(item)
     --closeProject()
     --refresh(ProjectsFile)--打开项目文件夹，就自动关闭了项目
    elseif id==Rid.menu_file_save then--保存
-    editorFunc.save()
+    --editorFunc.save()
    elseif id==Rid.menu_file_close then--关闭文件
     editorFunc.closeFile()
    elseif id==Rid.menu_code_format then--格式化
@@ -667,196 +668,7 @@ pathsTabLay.addOnTabSelectedListener(TabLayout.OnTabSelectedListener({
 }))
 
 
---application.set("luaeditor_initialized",false)--强制初始化编辑器
---设置编辑器
-if notSafeModeEnable then
-  --safeModeText.setVisibility(View.GONE)
-  if not(application.get("luaeditor_initialized")) then--编辑器未初始化
-    luaEditorParent.removeView(luaEditorPencilEdit)
-    luaEditorParent.removeView(luaEditor)
-    local editorText=luaEditor.text
-    luaEditor.text=""
-    activity.newTask(function()
-      require "import"
-      notLoadTheme=true
-      require "Jesse205"
-      import "androidApis.editor.androluaApis"
-      import "androidApis.editor.systemApis"
-      import "androidApis.editor.androidxApis"
-      require "EditorKeyWords"--关键字
 
-      local namesCheck={}
-
-      function addPackages(lang,packages)
-        for index,package in pairs(packages) do
-          local methods={}
-          local packageTable=_G[package]
-          local packageType=type(packageTable)
-
-          if packageType=="table" then
-            for method,func in pairs(packageTable) do
-              table.insert(methods,method)
-            end
-           elseif packageType=="userdata" then
-            local inserted={}
-            local class=packageTable.getClass()
-            pcall(function()
-              for index,content in ipairs(luajava.astable(class.getMethods())) do
-                local name=content.getName()
-                if not(inserted[name]) then
-                  inserted[name]=true
-                  table.insert(methods,name)
-                end
-              end
-            end)
-          end
-          lang.a(package,methods)
-        end
-      end
-      local Lexer=luajava.bindClass("b.b.a.b.k")
-      local lang=Lexer.e()
-
-      local names=application.get("editorBaseList")
-      if not(names) then
-        names=lang.g()--获取现在的names
-        application.set("editorBaseList",names)
-      end
-      names=luajava.astable(names)
-      for index,content in ipairs(names) do
-        namesCheck[content]=true
-      end
-
-      for index,content in ipairs({androluaApis,systemApis,EditorKeyWords}) do--插入新的names
-        for index,content in ipairs(content) do
-          if not(namesCheck[content]) then
-            table.insert(names,content)
-            namesCheck[content]=true
-          end
-        end
-      end
-      if activity.getSharedData("AndroidX_Highlight") then
-        for index,content in ipairs(androidxApis) do
-          if not(namesCheck[content]) then
-            table.insert(names,content)
-            namesCheck[content]=true
-          end
-        end
-      end
-
-      addPackages(lang,{"activity","application","LuaUtil","android","R"})
-
-      if activity.getSharedData("Jesse205Lib_Highlight") then--添加杰西205库
-        import "Jesse205Apis"
-        for index,content in ipairs(Jesse205Apis) do
-          if not(namesCheck[content]) then
-            table.insert(names,content)
-            namesCheck[content]=true
-          end
-        end
-        for index,content in ipairs(StyleWidget.types) do
-          if not(namesCheck[content]) then
-            table.insert(names,content)
-            namesCheck[content]=true
-          end
-        end
-        addPackages(lang,{"string","utf8","math","theme","Jesse205","AppPath","MyToast"})
-      end
-      lang.B(names)--设置成新的names
-      return true
-    end,
-    function(success)
-      luaEditor.respan()
-      luaEditor.invalidate()--不知道干啥的，调用一下就对了
-      if editorText~="" then
-        luaEditor.text=editorText
-      end
-      luaEditorParent.addView(luaEditorPencilEdit)
-      luaEditorParent.addView(luaEditor)
-      luaEditorParent.removeView(luaEditorProgressBar)--移除进度条
-      application.set("luaeditor_initialized",success)
-      MyAnimationUtil.ScrollView.onScrollChange(NowEditor,NowEditor.getScrollX(),NowEditor.getScrollY(),0,0,appBarLayout,nil,true)
-    end).execute({})
-
-   else
-    luaEditorParent.removeView(luaEditorProgressBar)--移除进度条
-  end
-
-
-  for index,content in pairs(EditorUtil.Editors)
-    if EditorUtil.IsEditors[index] then
-      content.onScrollChange=function(view,l,t,oldl,oldt)
-        MyAnimationUtil.ScrollView.onScrollChange(view,l,t,oldl,oldt,appBarLayout)
-      end
-    end
-  end
-  luaEditor.OnSelectionChangedListener=function(status,start,end_)
-    onEditorSelectionChangedListener(luaEditor,status,start,end_)
-  end
-
-  --LuaEditor放大镜
-  showingMagnifier=false
-  clickingLuaEitorEvent=nil
-  luaEditor.onTouch=function(view,event)
-    --print(view.getRowWidth())
-    if magnifier and editor_magnify then
-      local action=event.action
-      local relativeCaretX=view.getCaretX()-view.getScrollX()
-      local relativeCaretY=view.getCaretY()-view.getScrollY()
-      local x=event.getX()
-      local y=event.getY()
-      local magnifierX=x
-      local magnifierY=relativeCaretY-view.getTextSize()/2+math.dp2int(2)
-      local isNearChar
-
-      if action==MotionEvent.ACTION_DOWN or action==MotionEvent.ACTION_MOVE then
-        if not(clickingLuaEitorEvent) or (clickingLuaEitorEvent.x~=x or clickingLuaEitorEvent.y~=y) then
-          isNearChar=isNearChar2(relativeCaretX,relativeCaretY,x,y)
-          clickingLuaEitorEvent={x=x,y=y}
-          if isNearChar then
-            magnifier.show(magnifierX,magnifierY)
-            --print(magnifierX,magnifierY,x,y)
-            showingMagnifier=true
-            if not(magnifierUpdateTi.isRun()) then
-              magnifierUpdateTi.start()
-            end
-            if not(magnifierUpdateTi.getEnabled()) then
-              magnifierUpdateTi.setEnabled(true)
-            end
-           else
-            if showingMagnifier then
-              magnifierUpdateTi.setEnabled(false)
-              magnifier.dismiss()
-              showingMagnifier=false
-            end
-          end
-        end
-       elseif action==MotionEvent.ACTION_CANCEL or action==MotionEvent.ACTION_UP then
-        clickingLuaEitorEvent=nil
-        if showingMagnifier then
-          magnifierUpdateTi.setEnabled(false)
-          magnifier.dismiss()
-          showingMagnifier=false
-        end
-      end
-    end
-  end
- else
-  editorGroup.addView(loadlayout2({
-    TextView;
-    text="Aide Lua 安全模式";
-    textSize="16sp";
-    padding="4dp";
-    paddingLeft="6dp";
-    paddingRight="6dp";
-    layout_gravity="left|bottom";
-    id="safeModeText";
-    textColor=0xff000000;
-    backgroundColor=0xcceeeeee;
-    clickable=true;
-    tooltip="安全模式可以屏蔽很多效果，可以解决很多问题。如要退出安全模式，请删除 /sdcard/aidelua_safemode ，然后重启应用";
-  },nil,CoordinatorLayout))
-  luaEditorParent.removeView(luaEditorProgressBar)
-end
 
 cnString2EnString={
   {"（","("},

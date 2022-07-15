@@ -5,6 +5,7 @@ EditorsManager.actions=managerActions
 EditorsManager.editorConfig=nil
 EditorsManager.editorType=nil
 EditorsManager.editor=nil
+--编辑器活动(事件)，编辑器(View)，视图列表(table)
 local editorActions,editor,editorGroupViews
 
 import "io.github.rosemoe.editor.widget.CodeEditor"
@@ -23,7 +24,7 @@ MyCodeEditor=editor2my(CodeEditor)
 import "layouts.editorLayouts"
 
 --编辑器提示关键词
-EditorsManager.keyWords={
+EditorsManager.keyWords=String({
   --一些事件
   "onCreate",
   "onStart",
@@ -61,10 +62,10 @@ EditorsManager.keyWords={
   --一些常用但不自带的类
   "PhotoView",
   "LuaLexerIteratorBuilder",
-}
+})
 
 --Jesse205库关键词
-EditorsManager.jesse205KeyWords={
+EditorsManager.jesse205KeyWords=String({
   "newActivity","getSupportActionBar","getSharedData","setSharedData",
   "activity2luaApi",
 
@@ -91,7 +92,7 @@ EditorsManager.jesse205KeyWords={
   --适配器
   "MyLuaMultiAdapter","MyLuaAdapter","LuaCustRecyclerAdapter",
   "LuaCustRecyclerHolder","AdapterCreator",
-}
+})
 
 local fileType2Language={--部分暂时没有对应的语言
   --lua=LuaLanguage.getInstance(),
@@ -111,7 +112,7 @@ local fileType2Language={--部分暂时没有对应的语言
 }
 EditorsManager.fileType2Language=fileType2Language
 
-local fileType2EditorType={
+local fileType2EditorType={--获取文件对应的编辑器
   lua="LuaEditor",
   aly="LuaEditor",
 
@@ -129,11 +130,11 @@ local fileType2EditorType={
 EditorsManager.fileType2Language=fileType2Language
 
 --默认的管理器的活动事件
-local function generalActionEvent(readName,readName,...)
-  local func=editorActions[readName]
-  if func then
+local function generalActionEvent(name1,name2,...)
+  local func=editorActions[name1]
+  if func then--func不为nil，说明编辑器支持此功能
     if func=="default" then
-      return editor[readName](...)
+      return editor[name2](...)
      else
       return func(editorGroupViews,...)
     end
@@ -141,25 +142,27 @@ local function generalActionEvent(readName,readName,...)
     return false
   end
 end
-function managerActions.undo()
+
+function managerActions.undo()--撤销
   generalActionEvent("undo","undo")
 end
 
-function managerActions.redo()
+function managerActions.redo()--重做
   generalActionEvent("redo","redo")
 end
-function managerActions.comment()
-  generalActionEvent("comment","comment")
+
+function managerActions.commented()--注释
+  generalActionEvent("commented","commented")
 end
 
-function managerActions.getText()
+function managerActions.getText()--获取编辑器文字内容
   local text=generalActionEvent("getText","getText")
   if text then
     return tostring(text)
   end
 end
 
-function managerActions.search(text,gotoNext)
+function managerActions.search(text,gotoNext)--搜索
   local searchActions=editorActions.search
   if searchActions then
     if searchActions=="default" or searchActions.search=="default" then
@@ -182,13 +185,16 @@ function managerActions.save2Tab()--保存到标签
   end
 end
 
-local searching
-function EditorsManager.startSearch()
+local searching,searchedContent
+function EditorsManager.startSearch()--启动搜索
   local searchActions=editorActions.search
+  if type(searchActions)~="table" then
+    searchActions=nil
+  end
   if searchActions then
     local search=EditorsManager.action.search
     local ids
-    local idx=0
+    --local idx=0
     searching=true
     if searchActions.start then
       searchActions.start(editorGroupViews)
@@ -200,7 +206,8 @@ function EditorsManager.startSearch()
         end
       end,
       onTextChanged=function(text)
-        application.set("editor_search_text",text)
+        searchedContent=text
+        --application.set("editor_search_text",text)
         search(text)
       end,
       onActionItemClicked=function(mode,item)
@@ -212,15 +219,15 @@ function EditorsManager.startSearch()
       end,
       onDestroyActionMode=function(mode)
         searching=false
-        if searchActions.finish then
+        if searchActions.finish then--结束搜索
           searchActions.finish(editorGroupViews)
         end
       end,
     })
-    local searchContent=application.get("editor_search_text")
-    if searchContent then
-      ids.searchEdit.text=searchContent
-      ids.searchEdit.setSelection(utf8.len(tostring(searchContent)))
+    --local searchContent=application.get("editor_search_text")
+    if searchedContent then--恢复已搜索的内容
+      ids.searchEdit.text=searchedContent
+      ids.searchEdit.setSelection(utf8.len(tostring(searchedContent)))
     end
   end
 end
@@ -230,6 +237,7 @@ function EditorsManager.switchLanguage(language)
   editor.setEditorLanguage(language)
 end
 
+--切换编辑器
 function EditorsManager.switchEditor(editorType)
   if EditorsManager.editorType==editorType then--如果已经是当前编辑器，则不需要再切换一次了
     print("警告：编辑器切换冲突")
@@ -254,9 +262,13 @@ function EditorsManager.switchEditor(editorType)
   end
   editor=editorGroupViews.editor
   EditorsManager.editor=editor
+  
+  --print(editor)
 end
 
+--同时切换编辑器和语言，一般用于打开文本文件
 function EditorsManager.switchEditorByFileType(fileType)
+  --先切换编辑器，后切换编辑器语言，因为语言的设置是给当前正在使用的编辑器使用的
   EditorsManager.switchEditor(fileType2EditorType[fileType])
   EditorsManager.switchLanguage(fileType2Language[fileType])
 end
