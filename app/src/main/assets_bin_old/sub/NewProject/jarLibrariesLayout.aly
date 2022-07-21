@@ -1,0 +1,34 @@
+{
+  LinearLayout;
+  layout_width="fill";
+  orientation="vertical";
+  layoutTransition=newLayoutTransition();
+  contentDescription="Jar库";
+  {--Jar库
+    LinearLayoutCompat;
+    layout_width="fill";
+    orientation="vertical";
+    layout_height="40dp";
+    gravity="bottom";
+    focusable=false;
+    layout_marginLeft="16dp";
+    layout_marginRight="16dp";
+    {
+      AppCompatTextView;
+      text="Jar库";
+      textSize="14sp";
+      typeface=Typeface.defaultFromStyle(Typeface.BOLD);
+      textColor=theme.color.colorAccent;
+      layout_marginBottom="8dp";
+    };
+  };
+  {
+    ChipGroup;
+    id="jarLibrariesGroup";
+    layout_width="fill";
+    layoutTransition=newLayoutTransition();
+    layout_marginLeft="16dp";
+    layout_marginRight="16dp";
+    layout_marginBottom="8dp";
+  };
+}

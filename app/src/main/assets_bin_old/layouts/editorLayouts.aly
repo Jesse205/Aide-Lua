@@ -1,0 +1,373 @@
+{--各种编辑器，编辑器的id将被赋予成局部变量
+  NoneView={
+    layout={LinearLayoutCompat},
+    action={
+      undo=nil,
+      redo=nil,
+      format=nil,
+      search=nil,
+    },
+  },
+
+  LuaEditor={--Lua编辑器
+    layout={
+      FrameLayout;
+      layout_height="fill";
+      layout_width="fill";
+      layoutTransition=newLayoutTransition();
+      id="editorParent";
+      {
+        ProgressBar;--进度条
+        id="progressBar";
+        layout_gravity="center";
+      };
+      {
+        EditText;--手写编辑框
+        layout_width="fill";
+        layout_height="fill";
+        id="pencilEdit";
+        gravity="top|left";
+        text=" ";
+        textSize=0;
+      };
+      {
+        MyLuaEditor;--Lua编辑器
+        layout_height="fill";
+        id="editor";
+        layout_width="fill";
+        focusable=true;
+        textHighlightColor=0x99616161;
+        keywordColor=0xff3f51b5;
+        stringColor=0xffc2185b;
+        commentColor=0xff9e9e9e;
+        basewordColor=theme.color.Blue;
+        userwordColor=0xff5c6bc0;
+        textSize=math.dp2int(14);
+      };
+    },
+    init=function(ids)
+      local editor,pencilEdit,progressBar,editorParent=ids.editor,ids.pencilEdit,ids.progressBar,ids.editorParent
+      --application.set("luaeditor_initialized",false)--强制初始化编辑器
+      if notSafeModeEnable then--非安全模式
+        --safeModeText.setVisibility(View.GONE)
+        if not(application.get("luaeditor_initialized")) then--编辑器未初始化
+          editorParent.removeView(luaEditorPencilEdit)--先移除view，避免手写输入以及编辑器渲染导致的bug
+          editorParent.removeView(luaEditor)
+          local editorText=editor.text--保存一下编辑器内文字，
+          editor.text=""--防止渲染文字造成的卡顿
+          local keysList={EditorsManager.keyWords,EditorsManager.jesse205KeyWords}
+          activity.newTask(function(keyWords,jesse205KeyWords)
+            require "import"
+            import "androidApis.editor.androluaApis"
+            import "androidApis.editor.systemApis"
+
+            local namesCheck={}
+
+            function addPackages(lang,packages)
+              for index,package in pairs(packages) do
+                local methods={}
+                local packageTable=_G[package]
+                local packageType=type(packageTable)
+
+                if packageType=="table" then
+                  for method,func in pairs(packageTable) do
+                    table.insert(methods,method)
+                  end
+                 elseif packageType=="userdata" then
+                  local inserted={}
+                  local class=packageTable.getClass()
+                  pcall(function()
+                    for index,content in ipairs(luajava.astable(class.getMethods())) do
+                      local name=content.getName()
+                      if not(inserted[name]) then
+                        inserted[name]=true
+                        table.insert(methods,name)
+                      end
+                    end
+                  end)
+                end
+                lang.a(package,methods)
+              end
+            end
+            local Lexer=luajava.bindClass("b.b.a.b.k")
+            local lang=Lexer.e()
+
+            local names=application.get("editorBaseList")
+            if not(names) then
+              names=lang.g()--获取现在的names
+              application.set("editorBaseList",names)
+            end
+            names=luajava.astable(names)
+            for index,content in ipairs(names) do
+              namesCheck[content]=true
+            end
+
+            for index,content in ipairs({androluaApis,systemApis,luajava.astable(keyWords)}) do--插入新的names
+              for index,content in ipairs(content) do
+                if not(namesCheck[content]) then
+                  table.insert(names,content)
+                  namesCheck[content]=true
+                end
+              end
+            end
+            if activity.getSharedData("AndroidX_Highlight") then
+              import "androidApis.editor.androidxApis"
+              for index,content in ipairs(androidxApis) do
+                if not(namesCheck[content]) then
+                  table.insert(names,content)
+                  namesCheck[content]=true
+                end
+              end
+            end
+
+            addPackages(lang,{"activity","application","LuaUtil","android","R"})
+
+            if activity.getSharedData("Jesse205Lib_Highlight") then--添加杰西205库
+              notLoadTheme=true
+              require "Jesse205"
+              --import "Jesse205Apis"
+              for index,content in ipairs(luajava.astable(jesse205KeyWords)) do
+                if not(namesCheck[content]) then
+                  table.insert(names,content)
+                  namesCheck[content]=true
+                end
+              end
+              for index,content in ipairs(StyleWidget.types) do
+                if not(namesCheck[content]) then
+                  table.insert(names,content)
+                  namesCheck[content]=true
+                end
+              end
+              addPackages(lang,{"string","utf8","math","theme","Jesse205","AppPath","MyToast"})
+            end
+            lang.B(names)--设置成新的names
+            return true
+          end,
+          function(success)
+            editor.respan()
+            editor.invalidate()--不知道干啥的，调用一下就对了
+            if editorText~="" then
+              editor.text=editorText
+            end
+            editorParent.addView(pencilEdit)
+            editorParent.addView(editor)
+            editorParent.removeView(progressBar)--移除进度条
+            application.set("luaeditor_initialized",success)
+            MyAnimationUtil.ScrollView.onScrollChange(editor,editor.getScrollX(),editor.getScrollY(),0,0,appBarLayout,nil,true)
+          end).execute(keysList)
+
+         else
+          editorParent.removeView(progressBar)--移除进度条
+        end
+
+        editor.onScrollChange=function(view,l,t,oldl,oldt)
+          MyAnimationUtil.ScrollView.onScrollChange(view,l,t,oldl,oldt,appBarLayout)
+        end
+        editor.OnSelectionChangedListener=function(status,start,end_)
+          onEditorSelectionChangedListener(luaEditor,status,start,end_)
+        end
+
+        --LuaEditor放大镜
+        local showingMagnifier=false
+        local clickingLuaEitorEvent=nil
+        editor.onTouch=function(view,event)
+          --print(view.getRowWidth())
+          if magnifier and editor_magnify then
+            local action=event.action
+            local relativeCaretX=view.getCaretX()-view.getScrollX()
+            local relativeCaretY=view.getCaretY()-view.getScrollY()
+            local x=event.getX()
+            local y=event.getY()
+            local magnifierX=x
+            local magnifierY=relativeCaretY-view.getTextSize()/2+math.dp2int(2)
+            local isNearChar
+
+            if action==MotionEvent.ACTION_DOWN or action==MotionEvent.ACTION_MOVE then
+              if not(clickingLuaEitorEvent) or (clickingLuaEitorEvent.x~=x or clickingLuaEitorEvent.y~=y) then
+                isNearChar=isNearChar2(relativeCaretX,relativeCaretY,x,y)
+                clickingLuaEitorEvent={x=x,y=y}
+                if isNearChar then
+                  magnifier.show(magnifierX,magnifierY)
+                  --print(magnifierX,magnifierY,x,y)
+                  showingMagnifier=true
+                  if not(magnifierUpdateTi.isRun()) then
+                    magnifierUpdateTi.start()
+                  end
+                  if not(magnifierUpdateTi.getEnabled()) then
+                    magnifierUpdateTi.setEnabled(true)
+                  end
+                 else
+                  if showingMagnifier then
+                    magnifierUpdateTi.setEnabled(false)
+                    magnifier.dismiss()
+                    showingMagnifier=false
+                  end
+                end
+              end
+             elseif action==MotionEvent.ACTION_CANCEL or action==MotionEvent.ACTION_UP then
+              clickingLuaEitorEvent=nil
+              if showingMagnifier then
+                magnifierUpdateTi.setEnabled(false)
+                magnifier.dismiss()
+                showingMagnifier=false
+              end
+            end
+          end
+        end
+       else
+
+        editorParent.removeView(progressBar)
+      end
+
+      local cnString2EnString={
+        {"（","("},
+        {"）",")"},
+        {"［","["},
+        {"］","]"},
+        {"＇","'"},
+        {"＂","\""},
+      }
+      pencilEdit.addTextChangedListener({
+        onTextChanged=function(text,start,before,count)
+          text=tostring(text)
+          if text~=" " then
+            if text=="" then
+             else
+              local newText=text:match(" (.+)")
+              for index,content in ipairs(cnString2EnString)
+                newText=newText:gsub(content[1],content[2])
+              end
+              editor.paste(newText)
+              --print(newText)
+            end
+            pencilEdit.text=" "
+            pencilEdit.setSelection(1)
+            editor.requestFocus()
+          end
+        end
+      })
+      pencilEdit.onFocusChange=function(view,hasFocus)
+        if hasFocus then
+          view.setSelection(1)
+        end
+      end
+      pencilEdit.setBackground(nil)
+
+    end,
+    action={
+      undo="default",
+      redo="default",
+      format="default",
+      search="default",
+      getText="default",
+      setText="default",
+      commented=function(ids)
+        local editor=ids.editor
+        local selectedText=editor.getSelectedText()
+        if #selectedText~=0 then
+          if NowFileType=="lua" or NowFileType=="aly" then--Lua类型
+            if selectedText:find("\n") then
+              local equals=""
+              while selectedText:find("]"..equals.."]") do
+                equals=equals.."="
+              end
+              editor.paste("--["..equals.."["..selectedText.."]"..equals.."]")
+             else
+              editor.paste("--"..selectedText.."")
+            end
+           else
+            showSnackBar(R.string.file_not_supported)
+          end
+        end
+      end,
+
+    },
+    supportScroll=true;
+  },
+  CodeEditor={
+    layout={
+      LinearLayoutCompat;
+      layout_height="fill";
+      layout_width="fill";
+      layoutTransition=newLayoutTransition();
+      id="editorParent";
+      {
+        MyCodeEditor;
+        layout_height="fill";
+        id="editor";
+        layout_width="fill";
+        focusable=true;
+        nonPrintablePaintingFlags=CodeEditor.FLAG_DRAW_WHITESPACE_LEADING;
+        textSize=14;
+        overScrollEnabled=false;
+      };
+    },
+    init=function(ids)
+      local editor,editorParent=ids.editor,ids.editorParent
+      import "io.github.rosemoe.editor.widget.schemes.SchemeDarcula"
+      import "io.github.rosemoe.editor.widget.schemes.SchemeGitHub"
+
+      if ThemeUtil.isSysNightMode() then
+        editor.setColorScheme(SchemeDarcula())
+       else
+        editor.setColorScheme(SchemeGitHub())
+      end
+      local fontFile=File(LuaApplication.getInstance().getLuaExtDir("fonts"), "default.ttf")
+      if fontFile.exists() then
+        editor.setTypefaceText(Typeface.createFromFile(fontFile))
+       else
+        editor.setTypefaceText(Typeface.MONOSPACE)
+      end
+    end,
+    action={
+      undo="default",
+      redo="default",
+      format=function(ids)end,
+      search={
+        start=function(ids)
+          ids.editor.mStartedActionMode=1
+        end,
+        search=function(ids,text,gotoNext)
+          local editor=ids.editor
+          editor.getSearcher().search(tostring(text))
+          if gotoNext then
+            editor.getSearcher().gotoNext()
+          end
+        end,
+        finish=function(editorGroupViews)
+          local editor=editorGroupViews.editor
+          editor.mStartedActionMode=0
+          editor.getSearcher().stopSearch()
+        end
+      },
+    getText="default",
+      setText=function(ids,text)
+        ids.editor.setText(text)
+        end,
+    },
+    supportScroll=true;
+  },
+  PhotoView={
+    layout={
+      LinearLayoutCompat;
+      layout_height="fill";
+      layout_width="fill";
+      layoutTransition=newLayoutTransition();
+      id="editorParent";
+      visibility=View.GONE;
+      {
+        PhotoView;
+        layout_height="fill";
+        id="editor";
+        layout_width="fill";
+        padding="32dp";
+      };
+    },
+    action={
+      undo=nil,
+      redo=nil,
+      format=nil,
+      search=nil,
+    },
+  }
+}

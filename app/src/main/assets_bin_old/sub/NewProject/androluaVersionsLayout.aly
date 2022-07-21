@@ -1,0 +1,35 @@
+{
+  LinearLayout;
+  layout_width="fill";
+  orientation="vertical";
+  layoutTransition=newLayoutTransition();
+  contentDescription="AndroLua 版本";
+  {--AndroLua 版本
+    LinearLayoutCompat;
+    layout_width="fill";
+    orientation="vertical";
+    layout_height="40dp";
+    gravity="bottom";
+    focusable=false;
+    layout_marginLeft="16dp";
+    layout_marginRight="16dp";
+    {
+      AppCompatTextView;
+      text="*AndroLua 版本";
+      textSize="14sp";
+      typeface=Typeface.defaultFromStyle(Typeface.BOLD);
+      textColor=theme.color.colorAccent;
+      layout_marginBottom="8dp";
+    };
+  };
+  {
+    ChipGroup;
+    id="androluaVersionsGroup";
+    layout_width="fill";
+    layoutTransition=newLayoutTransition();
+    layout_marginLeft="16dp";
+    layout_marginRight="16dp";
+    layout_marginBottom="8dp";
+    singleSelection=true;
+  };
+}

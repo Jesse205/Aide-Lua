@@ -53,4 +53,64 @@ end
 function FilesBrowserManager.switchState()
 end
 
+function FilesBrowserManager.init(pathsTabLay,recyclerView)
+  pathsTabLay.addOnTabSelectedListener(TabLayout.OnTabSelectedListener({
+    onTabSelected=function(tab)
+      local tag=tab.tag
+      local path=tag.path
+      --[[
+    if path and path~=NowDirectory.getPath() then
+      refresh(File(path),true)
+    end]]
+    end,
+    onTabReselected=function(tab)
+    end,
+    onTabUnselected=function(tab)
+    end
+  }))
+
+  if notSafeModeEnable then
+    recyclerView.getViewTreeObserver().addOnGlobalLayoutListener({
+      onGlobalLayout=function()
+        if activity.isFinishing() then
+          return
+        end
+        MyAnimationUtil.RecyclerView.onScroll(recyclerView,0,0,sideAppBarLayout,"LastSideActionBarElevation")
+      end
+    })
+  end
+  swipeRefresh.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener{onRefresh=function()
+      refresh(nil,nil,true)
+    end
+  })
+  MyStyleUtil.applyToSwipeRefreshLayout(swipeRefresh)
+
+  DirData={}
+  adp=FileListAdapter(DirData,item)
+  recyclerView.setAdapter(adp)
+  layoutManager=LinearLayoutManager()
+  recyclerView.setLayoutManager(layoutManager)
+  recyclerView.addOnScrollListener(RecyclerView.OnScrollListener{
+    onScrolled=function(view,dx,dy)
+      MyAnimationUtil.RecyclerView.onScroll(view,dx,dy,sideAppBarLayout,"LastSideActionBarElevation")
+    end
+  })
+end
+
 return FilesBrowserManager
+
+--[[
+pathsTabLay.addOnTabSelectedListener(TabLayout.OnTabSelectedListener({
+  onTabSelected=function(tab)
+    local tag=tab.tag
+    local path=tag.path
+    if path and path~=NowDirectory.getPath() then
+      refresh(File(path),true)
+    end
+  end,
+  onTabReselected=function(tab)
+  end,
+  onTabUnselected=function(tab)
+  end
+}))
+]]

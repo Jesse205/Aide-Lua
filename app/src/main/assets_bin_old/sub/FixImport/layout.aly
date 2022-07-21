@@ -1,0 +1,37 @@
+{
+  CoordinatorLayout;
+  layout_width="fill";
+  layout_height="fill";
+  --gravity="center";
+  id="mainLay";
+  {
+    ProgressBar;
+    id="progressBar";
+    indeterminate=true;
+    layout_width="fill";
+    paddingTop="-8dp";
+    paddingBottom="-8dp";
+    layout_height="4dp";
+    style="?android:attr/progressBarStyleHorizontal"
+  };
+  {
+    ListView;
+    layout_width="fill";
+    layout_height="fill";
+    fastScrollEnabled=true;
+    clipToPadding=false;
+    id="listView";
+    scrollBarStyle=ScrollView.SCROLLBARS_OUTSIDE_OVERLAY;
+    choiceMode=ListView.CHOICE_MODE_MULTIPLE
+  };
+  {
+    FloatingActionButton;
+    id="floatButton";
+    layout_gravity="bottom|right";
+    layout_margin="16dp";
+    imageResource=R.drawable.ic_content_copy;
+    tooltip=activity.getString(R.string.copy);
+    --supportImageTintList={};
+    --backgroundColor=theme.color.colorPrimary;
+  };
+};

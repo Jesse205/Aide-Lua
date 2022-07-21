@@ -1,0 +1,42 @@
+{
+  {
+    "Widget (小部件)",
+    list= {"Button","EditText","TextView","ImageButton","ImageView"},
+    show= {"Button (按钮)","EditText (编辑框)","TextView (文本框)","ImageButton (图片按钮)","ImageView (图片框)"},
+  },
+  {
+    "Check View (检查视图)",
+    list={"CheckBox","RadioButton","ToggleButton","Switch"},
+    show={"CheckBox (复选框)","RadioButton (单选按钮)","ToggleButton (切换按钮)","Switch (开关)"},
+
+  },
+  {
+    "Adapter View (适配器视图)",
+    list={"ListView","GridView","PageView","ExpandableListView","Spinner","ViewPager","RecyclerView"},
+    show={"ListView (列表视图)","GridView (网格视图)","PageView (页面浏览)","ExpandableListView (多级列表)","Spinner (旋转器)","ViewPager (寻呼机)","RecyclerView (回收视图)"},
+
+  },
+  {
+    "Advanced Widget (高级部件)",
+    list={"SeekBar","ProgressBar","RatingBar","DatePicker","TimePicker","NumberPicker"},
+    show={"SeekBar (拖动条)","ProgressBar (进度条)","RatingBar (评级组件)","DatePicker (日期选择器)","TimePicker (时间选择器)","NumberPicker (数字选择器)"},
+  },
+  {
+    "Layout (布局)",
+    list={"LinearLayout","AbsoluteLayout","FrameLayout","RelativeLayout","CoordinatorLayout"},
+    show={"LinearLayout (线性布局)","AbsoluteLayout (绝对布局)","FrameLayout (框架布局)","RelativeLayout (相对布局)","CoordinatorLayout (协调布局)"},
+  },
+  {
+    "Advanced Layout (高级布局)",
+    list={"CardView","RadioGroup","GridLayout","ScrollView","HorizontalScrollView"},--不兼容的布局：SwipeRefreshLayout，SlidingPaneLayout，DrawerLayout
+    show={"CardView (卡片视图)","RadioGroup (选项按钮组)","GridLayout (网格布局)","ScrollView (滚动视图)","HorizontalScrollView (水平滚动视图)"},--不兼容的布局：SwipeRefreshLayout，SlidingPaneLayout，DrawerLayout
+  },
+  {
+    "Material Design (质感设计)",
+    list={"AppBarLayout","CollapsingToolbarLayout",
+      "BottomAppBar","BottomNavigationItemView","BottomNavigationView",
+      "MaterialButton","MaterialCardView","Chip","ChipGroup","CircularRevealFrameLayout",
+      "CircularRevealGridLayout","FloatingActionButton","NavigationView","TabLayout","TextInputEditText","TextInputLayout"},
+  },
+
+}

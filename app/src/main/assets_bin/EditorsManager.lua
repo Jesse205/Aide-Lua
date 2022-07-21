@@ -9,8 +9,6 @@ EditorsManager.editor=nil
 local editorActions,editor,editorGroupViews
 
 import "io.github.rosemoe.editor.widget.CodeEditor"
-import "io.github.rosemoe.editor.widget.schemes.SchemeDarcula"
-import "io.github.rosemoe.editor.widget.schemes.SchemeGitHub"
 import "io.github.rosemoe.editor.langs.EmptyLanguage"
 import "io.github.rosemoe.editor.langs.desc.JavaScriptDescription"
 import "io.github.rosemoe.editor.langs.html.HTMLLanguage"
@@ -151,12 +149,22 @@ function managerActions.redo()--重做
   generalActionEvent("redo","redo")
 end
 
+function managerActions.format()--注释
+  generalActionEvent("format","format")
+end
+
 function managerActions.commented()--注释
   generalActionEvent("commented","commented")
 end
 
 function managerActions.getText()--获取编辑器文字内容
   local text=generalActionEvent("getText","getText")
+  if text then
+    return tostring(text)
+  end
+end
+function managerActions.setText(...)--设置编辑器文字内容
+  local text=generalActionEvent("setText","setText",...)
   if text then
     return tostring(text)
   end
@@ -180,21 +188,21 @@ end
 function managerActions.save2Tab()--保存到标签
   local text=EditorsManager.action.getText()
   if text then
-   else
-    print("警告：无法获取代码")
+    FilesTabManager.changeContent(text)
+   else--防止以外调用函数
+    error("save2Tab:无法获取代码")
   end
 end
 
 local searching,searchedContent
 function EditorsManager.startSearch()--启动搜索
   local searchActions=editorActions.search
-  if type(searchActions)~="table" then
-    searchActions=nil
+  if searchActions=="default" then
+    searchActions={}--"default"就相当于是一张空的table，所有的一律默认
   end
   if searchActions then
-    local search=EditorsManager.action.search
+    local search=managerActions.search--搜索
     local ids
-    --local idx=0
     searching=true
     if searchActions.start then
       searchActions.start(editorGroupViews)
@@ -207,7 +215,6 @@ function EditorsManager.startSearch()--启动搜索
       end,
       onTextChanged=function(text)
         searchedContent=text
-        --application.set("editor_search_text",text)
         search(text)
       end,
       onActionItemClicked=function(mode,item)
@@ -232,6 +239,8 @@ function EditorsManager.startSearch()--启动搜索
   end
 end
 
+function EditorsManager.switchPreview(state)
+end
 
 function EditorsManager.switchLanguage(language)
   editor.setEditorLanguage(language)
@@ -262,8 +271,14 @@ function EditorsManager.switchEditor(editorType)
   end
   editor=editorGroupViews.editor
   EditorsManager.editor=editor
-  
+
   --print(editor)
+  editor.requestFocus()
+  if editorConfig.supportScroll then
+    MyAnimationUtil.ScrollView.onScrollChange(editor,editor.getScrollX(),editor.getScrollY(),0,0,appBarLayout,nil)
+   else
+    MyAnimationUtil.ScrollView.onScrollChange(editor,0,0,0,0,appBarLayout,nil)
+  end
 end
 
 --同时切换编辑器和语言，一般用于打开文本文件
@@ -271,6 +286,33 @@ function EditorsManager.switchEditorByFileType(fileType)
   --先切换编辑器，后切换编辑器语言，因为语言的设置是给当前正在使用的编辑器使用的
   EditorsManager.switchEditor(fileType2EditorType[fileType])
   EditorsManager.switchLanguage(fileType2Language[fileType])
+end
+
+function EditorsManager.init(previewChipGroup,editChip,previewChip)
+  local previewChipGroupSelectedId
+  previewChipGroup.setOnCheckedChangeListener{
+    onCheckedChanged=function(chipGroup, selectedId)
+      if selectedId==-1 and previewChipGroupSelectedId then
+        local chip=chipGroup.findViewById(previewChipGroupSelectedId)
+        chip.setChecked(true)
+        return
+       elseif chipGroup.getParent().getVisibility()==View.VISIBLE then
+        local chip=chipGroup.findViewById(selectedId)
+        if chip then
+          previewChipGroupSelectedId=chip.getId()
+          return
+        end
+      end
+      previewChipGroupSelectedId=nil
+    end
+  }
+
+  editChip.onClick=function()
+    EditorsManager.switchPreview(false)
+  end
+  previewChip.onClick=function()
+    EditorsManager.switchPreview(true)
+  end
 end
 
 return EditorsManager

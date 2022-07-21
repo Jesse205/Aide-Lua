@@ -1,0 +1,55 @@
+SettingsLayUtil.ITEM_AVATAR_SWITCH=9
+table.insert(SettingsLayUtil.itemsLay,{--设置项(头像,标题,简介)
+  LinearLayoutCompat;
+  layout_width="fill";
+  gravity="center";
+  focusable=true;
+  {
+    MaterialCardView;
+    layout_height="40dp";
+    layout_width="40dp";
+    layout_margin="16dp";
+    radius="20dp";
+    {
+      CardView;
+      layout_height="fill";
+      layout_width="fill";
+      radius="18dp";
+      {
+        AppCompatImageView;
+        layout_height="fill";
+        layout_width="fill";
+        id="icon";
+      };
+    };
+  };
+  {
+    LinearLayoutCompat;
+    orientation="vertical";
+    gravity="center";
+    layout_margin="16dp";
+    layout_weight=1;
+    layout_marginLeft=0;
+    {
+      AppCompatTextView;
+      id="title";
+      textSize="16sp";
+      layout_width="fill";
+      textColor=theme.color.textColorPrimary;
+    };
+    {
+      AppCompatTextView;
+      id="summary";
+      textSize="14sp";
+      layout_width="fill";
+    };
+  };
+  {
+    SwitchCompat;
+    focusable=false;
+    clickable=false;
+    layout_marginRight="16dp";
+    id="status";
+  };
+}
+)

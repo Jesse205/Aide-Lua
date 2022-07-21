@@ -1,0 +1,23 @@
+{
+  main={
+    LinearLayout,
+    orientation="vertical";
+    layout_width="fill";
+    layout_height="fill";
+  },
+  ck={
+    LinearLayout;
+    orientation="vertical";
+    {
+      RadioGroup;
+      layout_weight="1";
+      id="ck_rg";
+    };
+    {
+      Button;
+      Text="确定";
+      layout_gravity="right";
+      id="ck_bt";
+    };
+  };
+}

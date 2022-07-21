@@ -1,0 +1,13 @@
+[[{
+  LinearLayout;
+  layout_height="fill";
+  layout_width="fill";
+  orientation="vertical";
+  {
+    TextView;
+    gravity="center";
+    text="Hello World";
+    layout_height="fill";
+    layout_width="fill";
+  };
+}]]

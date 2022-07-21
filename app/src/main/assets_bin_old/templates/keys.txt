@@ -1,0 +1,13 @@
+应用名：appName
+包名：appPackageName
+附加Library（config.lua）：appIncludeLua
+附加Library（build.gradle）：appDependencies
+附加Library（settings.gradle）：appInclude
+编译Lua：compileLua
+AndroidX开关：androidX
+app默认主题（xml）：appTheme
+application下代码：am_application
+默认icon路径：appIcon
+默认导入：defaultImport
+Androlua版本：androluaVersion
+welcome信息：am_welcome_info

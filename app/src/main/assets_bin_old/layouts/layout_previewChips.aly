@@ -1,0 +1,31 @@
+{
+  CardView;
+  id="previewChipCardView";
+  layout_gravity="right";
+  visibility=View.GONE;
+  layout_margin="4dp";
+  elevation="4dp";
+  --layoutTransition=newLayoutTransition();
+  {
+    ChipGroup;
+    id="previewChipGroup";
+    layout_width="fill";
+    layout_height="fill";
+    singleSelection=true;
+    layout_margin="4dp";
+    {
+      Chip;
+      text=R.string.edit;
+      id="editChip";
+      checkable=true;
+      checkedIconEnabled=false;
+    };
+    {
+      Chip;
+      text=R.string.preview;
+      id="previewChip";
+      checkable=true;
+      checkedIconEnabled=false;
+    };
+  };
+};

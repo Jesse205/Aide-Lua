@@ -1,0 +1,23 @@
+{
+  LinearLayoutCompat;
+  orientation="vertical";
+  layout_width="fill";
+  layout_height="fill";
+  padding="16dp";
+  {
+    AppCompatTextView;
+    layout_width="fill";
+    id="name";
+    textSize="12sp";
+    --typeface=Typeface.DEFAULT_BOLD;
+    textColor=theme.color.textColorPrimary;
+  };
+ {
+    AppCompatTextView;
+    layout_width="fill";
+    id="summary";
+    textSize="12sp";
+    --typeface=Typeface.DEFAULT_BOLD;
+    --textColor=theme.color.textColorPrimary;
+  };
+}

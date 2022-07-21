@@ -1,0 +1,33 @@
+{
+  LinearLayout;
+  orientation="vertical";
+  layout_width="fill";
+  layout_marginLeft="8dp";
+  layout_marginRight="8dp";
+  MyTextInputLayout.Builder{
+    id="appNameLay";
+    layout_width="fill";
+    layout_margin="8dp";
+    layout_marginBottom=0;
+    hint=activity.getString(R.string.project_app_name);
+    {
+      id="appNameEdit";
+      inputType="text";
+      lines=1;
+      --text="MyApplication";
+    };
+  };
+  MyTextInputLayout.Builder{
+    id="packageNameLay";
+    layout_width="fill";
+    layout_margin="8dp";
+    layout_marginBottom=0;
+    hint=activity.getString(R.string.project_package_name);
+    {
+      id="packageNameEdit";
+      inputType="text";
+      lines=1;
+      --text="com.aidelua.MyApplication";
+    };
+  };
+};

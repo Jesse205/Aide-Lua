@@ -1,0 +1,159 @@
+{
+  {
+    name="Lua Activity",
+    fileType="lua",
+    defaultContent=[[require "import"
+import "android.app.*"
+import "android.os.*"
+import "android.widget.*"
+import "android.view.*"
+
+--activity.setTitle("Aide Lua")
+activity.setTheme(R.style.AppTheme)
+activity.setContentView(loadlayout("layout"))
+actionBar=activity.getActionBar()
+actionBar.setDisplayHomeAsUpEnabled(true) 
+
+function onOptionsItemSelected(item)
+  local id=item.getItemId()
+  if id==android.R.id.home then
+    activity.finish()
+  end
+end
+
+]],
+  },
+
+  {
+    name="Lua Activity (AndroidX)",
+    fileType="lua",
+    defaultContent=[[require "import"
+--import "androidx"
+import "androidx.appcompat.app.*"
+import "androidx.appcompat.view.*"
+import "androidx.appcompat.widget.*"
+import "android.app.*"
+import "android.os.*"
+import "android.widget.*"
+import "android.view.*"
+
+import "androidx.coordinatorlayout.widget.CoordinatorLayout"
+
+--activity.setTitle("Aide Lua")
+--activity.setTheme(R.style.AppTheme)
+activity.setContentView(loadlayout("layout"))
+actionBar=activity.getSupportActionBar()
+actionBar.setDisplayHomeAsUpEnabled(true) 
+
+function onOptionsItemSelected(item)
+  local id=item.getItemId()
+  if id==android.R.id.home then
+    activity.finish()
+  end
+end
+
+]],
+  },
+
+  {
+    name="Lua Activity (Jesse205)",
+    fileType="lua",
+    defaultContent=[[require "import"
+import "Jesse205"
+
+activity.setTitle(R.string.app_name)
+activity.setContentView(loadlayout2("layout"))
+actionBar.setDisplayHomeAsUpEnabled(true) 
+
+function onOptionsItemSelected(item)
+  local id=item.getItemId()
+  if id==android.R.id.home then
+    activity.finish()
+  end
+end
+
+function onConfigurationChanged(config)
+  screenConfigDecoder:decodeConfiguration(config)
+end
+
+
+screenConfigDecoder=ScreenFixUtil.ScreenConfigDecoder({
+  
+})
+
+onConfigurationChanged(activity.getResources().getConfiguration())
+
+]],
+  },
+
+  {
+    name="Lua Layout",
+    fileType="aly",
+    defaultContent=[[{
+  LinearLayout;
+  layout_height="fill";
+  layout_width="fill";
+  orientation="vertical";
+  {
+    TextView;
+    gravity="center";
+    text="Hello World";
+    layout_height="fill";
+    layout_width="fill";
+  };
+}]],
+  },
+
+  {
+    name="Lua Layout (AndroidX)",
+    fileType="aly",
+    defaultContent=[[{
+  CoordinatorLayout;
+  layout_height="fill";
+  layout_width="fill";
+  id="mainLay";
+  {
+    TextView;
+    gravity="center";
+    text="Hello World";
+    layout_height="fill";
+    layout_width="fill";
+  };
+}]],
+  },
+
+  {
+    name="Lua Table",
+    fileType="aly",
+    defaultContent=[[{
+  
+}]],
+  },
+
+  {
+    name="Lua Module",
+    fileType="lua",
+    defaultContent=[[local {{ShoredModuleName}}={}
+setmetatable({{ShoredModuleName}},{{ShoredModuleName}})
+
+function {{ShoredModuleName}}.__call(self)
+  self=table.clone(self)
+  return self
+end
+return {{ShoredModuleName}}
+]],
+  },
+
+  {
+    name="Empty Lua File",
+    fileType="lua",
+    defaultContent="",
+  },
+
+  {
+    name="Empty File",
+    fileType="txt",
+    defaultContent="",
+  },
+
+}

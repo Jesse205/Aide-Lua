@@ -56,7 +56,7 @@
           local editorText=editor.text--保存一下编辑器内文字，
           editor.text=""--防止渲染文字造成的卡顿
           local keysList={EditorsManager.keyWords,EditorsManager.jesse205KeyWords}
-          activity.newTask(function(keyWords)
+          activity.newTask(function(keyWords,jesse205KeyWords)
             require "import"
             import "androidApis.editor.androluaApis"
             import "androidApis.editor.systemApis"
@@ -102,7 +102,7 @@
               namesCheck[content]=true
             end
 
-            for index,content in ipairs({androluaApis,systemApis,keyWords}) do--插入新的names
+            for index,content in ipairs({androluaApis,systemApis,luajava.astable(keyWords)}) do--插入新的names
               for index,content in ipairs(content) do
                 if not(namesCheck[content]) then
                   table.insert(names,content)
@@ -125,8 +125,8 @@
             if activity.getSharedData("Jesse205Lib_Highlight") then--添加杰西205库
               notLoadTheme=true
               require "Jesse205"
-              import "Jesse205Apis"
-              for index,content in ipairs(Jesse205Apis) do
+              --import "Jesse205Apis"
+              for index,content in ipairs(luajava.astable(jesse205KeyWords)) do
                 if not(namesCheck[content]) then
                   table.insert(names,content)
                   namesCheck[content]=true
@@ -144,38 +144,33 @@
             return true
           end,
           function(success)
-            luaEditor.respan()
-            luaEditor.invalidate()--不知道干啥的，调用一下就对了
+            editor.respan()
+            editor.invalidate()--不知道干啥的，调用一下就对了
             if editorText~="" then
-              luaEditor.text=editorText
+              editor.text=editorText
             end
-            luaEditorParent.addView(luaEditorPencilEdit)
-            luaEditorParent.addView(luaEditor)
-            luaEditorParent.removeView(luaEditorProgressBar)--移除进度条
+            editorParent.addView(pencilEdit)
+            editorParent.addView(editor)
+            editorParent.removeView(progressBar)--移除进度条
             application.set("luaeditor_initialized",success)
-            MyAnimationUtil.ScrollView.onScrollChange(NowEditor,NowEditor.getScrollX(),NowEditor.getScrollY(),0,0,appBarLayout,nil,true)
+            MyAnimationUtil.ScrollView.onScrollChange(editor,editor.getScrollX(),editor.getScrollY(),0,0,appBarLayout,nil,true)
           end).execute(keysList)
 
          else
-          luaEditorParent.removeView(luaEditorProgressBar)--移除进度条
+          editorParent.removeView(progressBar)--移除进度条
         end
 
-
-        for index,content in pairs(EditorUtil.Editors)
-          if EditorUtil.IsEditors[index] then
-            content.onScrollChange=function(view,l,t,oldl,oldt)
-              MyAnimationUtil.ScrollView.onScrollChange(view,l,t,oldl,oldt,appBarLayout)
-            end
-          end
+        editor.onScrollChange=function(view,l,t,oldl,oldt)
+          MyAnimationUtil.ScrollView.onScrollChange(view,l,t,oldl,oldt,appBarLayout)
         end
-        luaEditor.OnSelectionChangedListener=function(status,start,end_)
+        editor.OnSelectionChangedListener=function(status,start,end_)
           onEditorSelectionChangedListener(luaEditor,status,start,end_)
         end
 
         --LuaEditor放大镜
-        showingMagnifier=false
-        clickingLuaEitorEvent=nil
-        luaEditor.onTouch=function(view,event)
+        local showingMagnifier=false
+        local clickingLuaEitorEvent=nil
+        editor.onTouch=function(view,event)
           --print(view.getRowWidth())
           if magnifier and editor_magnify then
             local action=event.action
@@ -220,28 +215,52 @@
           end
         end
        else
-        editorGroup.addView(loadlayout2({
-          TextView;
-          text="Aide Lua 安全模式";
-          textSize="16sp";
-          padding="4dp";
-          paddingLeft="6dp";
-          paddingRight="6dp";
-          layout_gravity="left|bottom";
-          id="safeModeText";
-          textColor=0xff000000;
-          backgroundColor=0xcceeeeee;
-          clickable=true;
-          tooltip="安全模式可以屏蔽很多效果，可以解决很多问题。如要退出安全模式，请删除 /sdcard/aidelua_safemode ，然后重启应用";
-        },nil,CoordinatorLayout))
-        luaEditorParent.removeView(luaEditorProgressBar)
+
+        editorParent.removeView(progressBar)
       end
+
+      local cnString2EnString={
+        {"（","("},
+        {"）",")"},
+        {"［","["},
+        {"］","]"},
+        {"＇","'"},
+        {"＂","\""},
+      }
+      pencilEdit.addTextChangedListener({
+        onTextChanged=function(text,start,before,count)
+          text=tostring(text)
+          if text~=" " then
+            if text=="" then
+             else
+              local newText=text:match(" (.+)")
+              for index,content in ipairs(cnString2EnString)
+                newText=newText:gsub(content[1],content[2])
+              end
+              editor.paste(newText)
+              --print(newText)
+            end
+            pencilEdit.text=" "
+            pencilEdit.setSelection(1)
+            editor.requestFocus()
+          end
+        end
+      })
+      pencilEdit.onFocusChange=function(view,hasFocus)
+        if hasFocus then
+          view.setSelection(1)
+        end
+      end
+      pencilEdit.setBackground(nil)
+
     end,
     action={
       undo="default",
       redo="default",
       format="default",
       search="default",
+      getText="default",
+      setText="default",
       commented=function(ids)
         local editor=ids.editor
         local selectedText=editor.getSelectedText()
@@ -261,7 +280,9 @@
           end
         end
       end,
+
     },
+    supportScroll=true;
   },
   CodeEditor={
     layout={
@@ -281,10 +302,29 @@
         overScrollEnabled=false;
       };
     },
+    init=function(ids)
+      local editor,editorParent=ids.editor,ids.editorParent
+      import "io.github.rosemoe.editor.widget.schemes.SchemeDarcula"
+      import "io.github.rosemoe.editor.widget.schemes.SchemeGitHub"
+
+      if ThemeUtil.isSysNightMode() then
+        editor.setColorScheme(SchemeDarcula())
+       else
+        editor.setColorScheme(SchemeGitHub())
+      end
+      local fontFile=File(LuaApplication.getInstance().getLuaExtDir("fonts"), "default.ttf")
+      if fontFile.exists() then
+        editor.setTypefaceText(Typeface.createFromFile(fontFile))
+       else
+        editor.setTypefaceText(Typeface.MONOSPACE)
+      end
+    end,
     action={
       undo="default",
       redo="default",
-      format=function(ids)end,
+      format=function(ids)
+        showSnackBar(R.string.file_not_supported)
+      end,
       search={
         start=function(ids)
           ids.editor.mStartedActionMode=1
@@ -302,7 +342,12 @@
           editor.getSearcher().stopSearch()
         end
       },
+      getText="default",
+      setText=function(ids,text)
+        ids.editor.setText(text)
+      end,
     },
+    supportScroll=true;
   },
   PhotoView={
     layout={

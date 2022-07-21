@@ -43,7 +43,6 @@ import "com.google.android.material.chip.ChipGroup"
 
 import "com.bumptech.glide.request.RequestOptions"
 import "com.bumptech.glide.load.engine.DiskCacheStrategy"
---import "com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions"
 
 import "com.nwdxlgzs.view.photoview.PhotoView"
 import "com.pixplicity.sharp.Sharp"
@@ -64,6 +63,8 @@ import "getImportCode"
 import "FilesBrowserManager"
 import "EditorsManager"
 import "FilesTabManager"
+import "ProjectManager"
+
 import "layouts.item"
 
 import "sub.LayoutHelper2.loadpreviewlayout"
@@ -77,24 +78,6 @@ plugins=PluginsUtil.getPlugins()
 --申请存储权限
 PermissionUtil.smartRequestPermission({"android.permission.WRITE_EXTERNAL_STORAGE","android.permission.READ_EXTERNAL_STORAGE"})
 
-DefaultPakcagePath=package.path
-
-
-
-subWindow_ProjectPath,subWindow_FilePath=...
-
-DirData=nil
-
---FilesDataList={}
-
-FilesTabList={}
-FilesListScroll={}
-
-PathsTabList={}
-PathsTabShowList={}
-
-magnifierPosition={}
-
 oldJesse205LibHl=getSharedData("Jesse205Lib_Highlight")
 oldAndroidXHl=getSharedData("AndroidX_Highlight")
 oldTheme=ThemeUtil.getAppTheme()
@@ -104,7 +87,6 @@ oldTabIcon=getSharedData("tab_icon")
 oldEditorSymbolBar=getSharedData("editor_symbolBar")
 oldEditorPreviewButton=getSharedData("editor_previewButton")
 
---editor_magnify=getSharedData("editor_magnify")
 
 lastBackTime=0
 
@@ -120,57 +102,16 @@ actionBar.setDisplayHomeAsUpEnabled(true)
 
 EditorUtil.switchEditor("NoneView")
 
---[[
-previewChipGroupSelectedId=editChip.getId()
-editChip.setChecked(true)
-]]
+
 LuaReservedCharacters={"switch","if","then","and","break","do",
   "else","elseif","end","false",
   "for","function","in","local","nil","not",
   "or","repeat","return","true","until","while"}--lua关键字
 
-if notSafeModeEnable then
-  pcall(function()--放大镜
-    import "android.widget.Magnifier"
-    magnifier=Magnifier(editorGroup)
-    magnifierUpdateTi=Ticker()--放大镜的定时器，定时刷新放大镜
-    magnifierUpdateTi.setPeriod(200)
-    magnifierUpdateTi.onTick=function()
-      magnifier.update()
-    end
-    magnifierUpdateTi.setEnabled(false)--先禁用放大镜
-  end)
-end
+
 
 function onCreate(savedInstanceState)
-  --[[
-  local openedProject=subWindow_ProjectPath or getSharedData("openedproject")
-  openedProject=tostring(openedProject)
-  if openedProject=="nil" then
-    openedProject=nil
-  end
-  if openedProject and openedProject~=ProjectsPath then
-    --print(openedProject,type(openedProject))
-    local projectDirectory=File(tostring(openedProject))
-    if projectDirectory.isDirectory() then
-      --NowProjectDirectory=projectDirectory
-      --NowDirectory=NowProjectDirectory
-      local openFile=tostring(subWindow_FilePath)
-      if openFile=="nil" then
-        openFile=nil
-       else
-        openFile=File(openFile)
-      end
-      openProject(projectDirectory,openFile)
-      --refresh(NowProjectDirectory)
-      NowEditor.setScrollY(0)
-    end
-   else
-    closeProject()
-    refresh()
-    editorFunc.open(true)
-    toggle.syncState()
-  end]]
+
   PluginsUtil.callElevents("onCreate",savedInstanceState)
 end
 
@@ -212,15 +153,6 @@ function onCreateOptionsMenu(menu)
     for index,content in ipairs(pluginsActivities) do
       pluginsMenuBuilder.add(pluginsActivitiesName[index])
       .onMenuItemClick=function()
-        --[[
-        local rootPath,filePath
-        if OpenedProject then
-          rootPath=NowProjectDirectory.getPath()
-          if OpenedFile then
-            filePath=NowFile.getPath()
-          end
-        end
-        newActivity(content,{rootPath,filePath})]]
       end
     end
   end
@@ -244,61 +176,23 @@ function onOptionsItemSelected(item)
    elseif id==Rid.menu_run then--运行
     ProjectManager.runProject()
    elseif id==Rid.menu_bin_run then--二次打包
-    --[[
-    local succeed
-    if OpenedFile and IsEdtor then
-      succeed=saveFile()
-     else
-      succeed=true
-    end
-    if succeed then
-      ReBuildTool(NowProjectDirectory.getPath(),true)
-    end]]
    elseif id==Rid.menu_project_bin then--二次打包
-    --[[
-    local succeed
-    if OpenedFile and IsEdtor then
-      succeed=saveFile()
-     else
-      succeed=true
-    end
-    if succeed then
-      ReBuildTool(NowProjectDirectory.getPath())
-    end]]
    elseif id==Rid.menu_project_close then--关闭项目
-   ProjectManager.closeProject()
-    --closeProject()
-    --refresh(ProjectsFile)--打开项目文件夹，就自动关闭了项目
+    ProjectManager.closeProject()
    elseif id==Rid.menu_file_save then--保存
     --editorFunc.save()
    elseif id==Rid.menu_file_close then--关闭文件
-    editorFunc.closeFile()
+    FilesTabManager.closeFile()
    elseif id==Rid.menu_code_format then--格式化
-    editorFunc.format()
+    EditorsManager.actions.format()
    elseif id==Rid.menu_code_search then--代码搜索
     EditorsManager.startSearch()
    elseif id==Rid.menu_code_checkImport then--检查导入
-    --[[
-    local packageName=activity.getPackageName()
-    if OpenedProject then--打开了工程
-      local projectPath=NowProjectDirectory.getPath()
-      local configPath=projectPath.."/.aidelua/config.lua"
-      local configFile=File(configPath)
-      if configFile.isFile() then--如果有文件
-        local config=getConfigFromFile(configPath)
-        if config.packageName then
-          packageName=config.packageName
-        end
-      end
-    end
-    newSubActivity("FixImport",{NowEditor.text,packageName})]]
    elseif id==Rid.menu_tools_javaApiViewer then--JavaAPI浏览器
     newSubActivity("JavaApi")
    elseif id==Rid.menu_tools_javaApiViewer_windmill then--JavaAPI浏览器
     startWindmillActivity("Java API")
    elseif id==Rid.menu_tools_logCat then--日志猫
-    --newSubActivity("LogCat")
-    --editorFunc.run(sdLogCatPath)
     if OpenedProject then
       editorFunc.run(checkSharedActivity("LogCat"))
      else
@@ -317,31 +211,9 @@ function onOptionsItemSelected(item)
    elseif id==Rid.menu_code_checkCode then--代码查错
     editorFunc.check()
    elseif id==Rid.menu_tools_layoutHelper then--布局助手
-    --[[
-    local prjPath,layoutContent
-    if OpenedProject then
-      local configPath=ReBuildTool.getConfigPathByProjectDir(NowProjectDirectory)
-      local configFile=File(configPath)
-      local config=ReBuildTool.getConfigByFilePath(configPath)
-      prjPath=ReBuildTool.getMainProjectDirByConfig(NowProjectDirectory,config).."/assets_bin"
-      if OpenedFile and ProjectUtil.getFileTypeByName(NowFile.getName())=="aly" then
-        layoutContent=NowEditor.getText()
-      end
-    end
-    newSubActivity("LayoutHelper2",{prjPath,layoutContent})]]--新的布局助手没做完
-    --[[
-    if OpenedProject then
-      if OpenedFile then
-        newSubActivity("LayoutHelper",{NowProjectDirectory.getPath().."/app/src/main/assets_bin",NowFile.getPath()})
-       else
-        newSubActivity("LayoutHelper",{NowProjectDirectory.getPath().."/app/src/main/assets_bin"})
-      end
-     else
-      newSubActivity("LayoutHelper")
-    end
-]]
+    
    elseif id==Rid.menu_more_openNewWindow then--打开新窗口
-    activity.newActivity("main",{ProjectManager.ProjectsPath},true)
+    --activity.newActivity("main",{ProjectManager.ProjectsPath},true)
   end
   PluginsUtil.callElevents("onOptionsItemSelected",item)
 end
@@ -504,9 +376,6 @@ function onResult(name,action,content)
 end
 
 function onPause()
-  if OpenedFile and IsEdtor then
-    saveFile()
-  end
 end
 
 function onStart()
@@ -533,8 +402,8 @@ function onKeyUp(KeyCode,event)
     if KeyCode==KeyEvent.KEYCODE_BACK then--返回键事件
       if drawerOpened and screenConfigDecoder.device=="phone" then--没有打开键盘且已打开侧滑，且设备为手机
         if NowDirectory then
-          if OpenedProject then--已打开项目
-            refresh(NowDirectory.getParentFile(),true)--返回上一个路径
+          if ProjectManager.openedProject then--已打开项目
+            ProjectManager.closeProject()
            else--未打开项目
             drawer.closeDrawer(Gravity.LEFT)--关闭侧滑
           end
@@ -563,64 +432,16 @@ end
 function onRestoreInstanceState(savedInstanceState)
   toggle.syncState()
 end
---onConfigurationChanged(activity.getResources().getConfiguration())
 
-drawerOpened=drawer.isDrawerOpen(Gravity.LEFT)
-if drawerOpened==false then
-  drawerOpened=nil
-end
-drawer.addDrawerListener(DrawerLayout.DrawerListener({
-  onDrawerSlide=function(view,slideOffset)
-    if screenConfigDecoder.device=="phone" then
-      if slideOffset>0.5 and not(drawerOpened) then
-        drawerOpened=true
-       elseif slideOffset<=0.5 and drawerOpened then
-        drawerOpened=false
-      end
-    end
-  end,
-  onDrawerOpened=function(view)
-    if OpenedFile and IsEdtor then
-      saveFile()
-    end
-  end,
-  onDrawerClosed=function(view)
-  end,
-  onDrawerStateChanged=function(newState)
-  end
-}))
+
 
 
 toggle=ActionBarDrawerToggle(activity,drawer,R.string.drawer_open, R.string.drawer_close)
 drawer.addDrawerListener(toggle)
 toggle.syncState()
 
-swipeRefresh.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener{onRefresh=function()
-    refresh(nil,nil,true)
-  end
-})
-MyStyleUtil.applyToSwipeRefreshLayout(swipeRefresh)
 
-DirData={}
-adp=FileListAdapter(DirData,item)
-recyclerView.setAdapter(adp)
-layoutManager=LinearLayoutManager()
-recyclerView.setLayoutManager(layoutManager)
-recyclerView.addOnScrollListener(RecyclerView.OnScrollListener{
-  onScrolled=function(view,dx,dy)
-    MyAnimationUtil.RecyclerView.onScroll(view,dx,dy,sideAppBarLayout,"LastSideActionBarElevation")
-  end
-})
-if notSafeModeEnable then
-  recyclerView.getViewTreeObserver().addOnGlobalLayoutListener({
-    onGlobalLayout=function()
-      if activity.isFinishing() then
-        return
-      end
-      MyAnimationUtil.RecyclerView.onScroll(recyclerView,0,0,sideAppBarLayout,"LastSideActionBarElevation")
-    end
-  })
-end
+--[[
 
 task(500,function()
   if safeModeEnable then
@@ -628,118 +449,36 @@ task(500,function()
    else
     MyAnimationUtil.ScrollView.onScrollChange(NowEditor,NowEditor.getScrollX(),NowEditor.getScrollY(),0,0,appBarLayout,nil,true)
   end
-end)
---[[
-listView.onScroll=function(view,firstVisibleItem,visibleItemCount,totalItemCount)
-  MyAnimationUtil.ListView.onScroll(view,firstVisibleItem,visibleItemCount,totalItemCount,sideAppBarLayout,"LastSideActionBarContrast")
-end]]
+end)]]
 
-
-filesTabLay.addOnTabSelectedListener(TabLayout.OnTabSelectedListener({
-  onTabSelected=function(tab)
-    local tag=tab.tag
-    local file=tag.file
-    if (not(OpenedFile) or file.getPath()~=NowFile.getPath()) then
-      openFile(file)
-    end
-  end,
-  onTabReselected=function(tab)
-    if OpenedFile and IsEdtor then
-      saveFile()
-    end
-  end,
-  onTabUnselected=function(tab)
-  end
-}))
-filesTabLay.onTouch=onFileTabLayTouch
-
-pathsTabLay.addOnTabSelectedListener(TabLayout.OnTabSelectedListener({
-  onTabSelected=function(tab)
-    local tag=tab.tag
-    local path=tag.path
-    if path and path~=NowDirectory.getPath() then
-      refresh(File(path),true)
-    end
-  end,
-  onTabReselected=function(tab)
-  end,
-  onTabUnselected=function(tab)
-  end
-}))
-
-
-
-
-cnString2EnString={
-  {"（","("},
-  {"）",")"},
-  {"［","["},
-  {"］","]"},
-  {"＇","'"},
-  {"＂","\""},
-}
-luaEditorPencilEdit.addTextChangedListener({
-  onTextChanged=function(text,start,before,count)
-    text=tostring(text)
-    if text~=" " then
-      if text=="" then
-       else
-        local newText=text:match(" (.+)")
-        for index,content in ipairs(cnString2EnString)
-          newText=newText:gsub(content[1],content[2])
-        end
-        luaEditor.paste(newText)
-        --print(newText)
-      end
-      luaEditorPencilEdit.text=" "
-      luaEditorPencilEdit.setSelection(1)
-      luaEditor.requestFocus()
-    end
-  end
-})
-luaEditorPencilEdit.onFocusChange=function(view,hasFocus)
-  if hasFocus then
-    view.setSelection(1)
-  end
+if safeModeEnable then
+  editorGroup.addView(loadlayout2({
+    TextView;
+    text="Aide Lua 安全模式";
+    textSize="16sp";
+    padding="4dp";
+    paddingLeft="6dp";
+    paddingRight="6dp";
+    layout_gravity="left|bottom";
+    id="safeModeText";
+    textColor=0xff000000;
+    backgroundColor=0xcceeeeee;
+    clickable=true;
+    tooltip="安全模式可以屏蔽很多效果，可以解决很多问题。如要退出安全模式，请删除 /sdcard/aidelua_safemode ，然后重启应用";
+  },nil,CoordinatorLayout))
 end
-luaEditorPencilEdit.setBackground(nil)
 
-if ThemeUtil.isSysNightMode() then
-  codeEditor.setColorScheme(SchemeDarcula())
- else
-  codeEditor.setColorScheme(SchemeGitHub())
-end
-local fontFile=File(LuaApplication.getInstance().getLuaExtDir("fonts"), "default.ttf")
-if fontFile.exists() then
-  codeEditor.setTypefaceText(Typeface.createFromFile(fontFile))
- else
-  codeEditor.setTypefaceText(Typeface.MONOSPACE)
-end
+
+
+
+
+
+
+
 
 refreshSymbolBar(oldEditorSymbolBar)
 
-previewChipGroup.setOnCheckedChangeListener{
-  onCheckedChanged=function(chipGroup, selectedId)
-    if selectedId==-1 and previewChipGroupSelectedId then
-      local chip=chipGroup.findViewById(previewChipGroupSelectedId)
-      chip.setChecked(true)
-      return
-     elseif chipGroup.getParent().getVisibility()==View.VISIBLE then
-      local chip=chipGroup.findViewById(selectedId)
-      if chip then
-        previewChipGroupSelectedId=chip.getId()
-        return
-      end
-    end
-    previewChipGroupSelectedId=nil
-  end
-}
-editChip.onClick=function()
-  EditorUtil.switchPreview(false)
-end
-previewChip.onClick=function()
-  EditorUtil.switchPreview(true)
-end
+
 
 recyclerView.onDrag=function(view,event)
   local action=event.getAction()
